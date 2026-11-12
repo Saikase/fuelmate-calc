@@ -205,7 +205,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               }}
               placeholder={
                 type === 'motorcycle'
-                  ? 'Ví dụ: Ninja 400, Ducati 821, Vario 160...'
+                  ? isEnglish
+                    ? 'e.g. Ninja 400, Ducati 821, Rebel 500...'
+                    : 'Ví dụ: Ninja 400, Ducati 821, Vario 160...'
+                  : isEnglish
+                  ? 'e.g. F-150, Civic, RAV4, Camry, Veloz...'
                   : 'Ví dụ: Innova 2.0, Territory, G63, Veloz...'
               }
               className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border font-medium transition ${
@@ -228,7 +232,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               type="text"
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
-              placeholder="Honda, Yamaha, Toyota, Ford, Ducati..."
+              placeholder={
+                isEnglish
+                  ? 'Honda, Yamaha, Ford, BMW, Ducati...'
+                  : 'Honda, Yamaha, Toyota, Ford, Ducati...'
+              }
               className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border font-medium transition ${
                 isDark
                   ? 'bg-slate-950 border-slate-700 text-white focus:border-amber-500'
@@ -250,7 +258,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
             ) : (
               <>
                 <span>🔍</span>
-                <span>Tra cứu thông số kỹ thuật (Cục Đăng Kiểm)</span>
+                <span>{t('searchOnlineBtn')}</span>
               </>
             )}
           </button>
@@ -272,7 +280,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               >
                 <span className="text-xs font-black px-2.5 py-1 rounded-full bg-emerald-600 text-white flex items-center gap-1 shadow-xs">
                   <span>✓</span>
-                  <span>Đã xác thực thông số</span>
+                  <span>{t('specsVerified')}</span>
                 </span>
                 <span
                   className={`text-xl font-black ${
@@ -283,7 +291,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                 </span>
               </div>
 
-              {/* Bảng thông số chi tiết - TUYỆT ĐỐI KHÔNG DÙNG NỀN XÁM MỜ MÙ MÙ */}
+              {/* Bảng thông số chi tiết */}
               <div
                 className={`p-3 rounded-xl border space-y-2 text-xs ${
                   isDark
@@ -297,7 +305,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                       isDark ? 'text-slate-400' : 'text-slate-500'
                     }`}
                   >
-                    Mẫu xe kiểm định:
+                    {t('officialModel')}
                   </div>
                   <div
                     className={`font-black text-sm mt-0.5 ${
@@ -314,7 +322,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                   }`}
                 >
                   <span className={isDark ? 'text-slate-400 font-medium' : 'text-slate-600 font-semibold'}>
-                    Động cơ:
+                    {t('engineLabel')}
                   </span>
                   <span className={`font-black ${isDark ? 'text-white' : 'text-slate-950'}`}>
                     {engine}
@@ -323,10 +331,10 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
 
                 <div className="flex items-center justify-between">
                   <span className={isDark ? 'text-slate-400 font-medium' : 'text-slate-600 font-semibold'}>
-                    Nhiên liệu khuyên dùng:
+                    {t('fuelTypeLabel')}
                   </span>
                   <span className="font-black px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[11px]">
-                    {fuelType.toUpperCase()}
+                    {selectedCountry.fuels[fuelType]?.name || fuelType.toUpperCase()}
                   </span>
                 </div>
 
@@ -338,7 +346,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                   }`}
                 >
                   <span>🏛️</span>
-                  <span>Nguồn: {source}</span>
+                  <span>{t('sourceLabel')} {source}</span>
                 </div>
               </div>
 
@@ -400,18 +408,17 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                       isDark ? 'text-amber-400' : 'text-amber-900'
                     }`}
                   >
-                    Không tồn tại phiên bản &quot;{vehicleName}&quot;
+                    {t('variantMismatchTitle')} &quot;{vehicleName}&quot;
                   </div>
                   <div
                     className={`text-[11px] mt-1 font-medium ${
                       isDark ? 'text-slate-300' : 'text-slate-700'
                     }`}
                   >
-                    Hồ sơ Cục Đăng kiểm không có số hiệu này. Dưới đây là các phiên bản{' '}
+                    {t('variantMismatchDesc')}{' '}
                     <strong className={isDark ? 'text-white' : 'text-slate-950'}>
                       {lookupState.baseModel}
-                    </strong>{' '}
-                    chính thức có trong cơ sở dữ liệu:
+                    </strong>
                   </div>
                 </div>
               </div>
@@ -439,7 +446,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                           isDark ? 'text-slate-400' : 'text-slate-600'
                         }`}
                       >
-                        {s.engine} • {s.fuelType.toUpperCase()}
+                        {s.engine} • {selectedCountry.fuels[s.fuelType]?.name || s.fuelType.toUpperCase()}
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-2">
@@ -450,7 +457,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                       >
                         {s.consumption} L/100km
                       </div>
-                      <div className="text-[9px] text-emerald-600 font-bold">Chọn bản này →</div>
+                      <div className="text-[9px] text-emerald-600 font-bold">{t('selectThisVariant')}</div>
                     </div>
                   </button>
                 ))}
@@ -465,7 +472,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-slate-400 hover:text-amber-400' : 'text-slate-600 hover:text-amber-700'
                   }`}
                 >
-                  ✏️ Xe của tôi là bản tự độ / độ máy (Tự nhập tay số L/100km)
+                  {t('customTunedOption')}
                 </button>
               )}
             </div>
@@ -488,14 +495,14 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                       isDark ? 'text-rose-400' : 'text-rose-800'
                     }`}
                   >
-                    Không tìm thấy thông số cho &quot;{vehicleName}&quot;
+                    {t('notFoundTitle')} &quot;{vehicleName}&quot;
                   </div>
                   <div
                     className={`text-[11px] mt-1 font-medium ${
                       isDark ? 'text-slate-300' : 'text-slate-700'
                     }`}
                   >
-                    Chuỗi ký tự không khớp với bất kỳ phương tiện nào trong CSDL Cục Đăng kiểm Việt Nam & Nhà sản xuất. Bạn hãy nhập mức tiêu thụ thực tế bên dưới:
+                    {t('notFoundDesc')}
                   </div>
                 </div>
               </div>
@@ -516,7 +523,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                   isDark ? 'text-slate-200' : 'text-slate-900'
                 }`}
               >
-                📝 Nhập thông số thực tế thủ công:
+                {t('manualEntryTitle')}
               </div>
 
               <div>
@@ -525,7 +532,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-slate-300' : 'text-slate-800'
                   }`}
                 >
-                  Định mức tiêu hao thực tế (L/100km): *
+                  {t('manualConsumptionLabel')} (L/100km): *
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -534,7 +541,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     min="0.1"
                     max="40"
                     required
-                    placeholder={type === 'motorcycle' ? 'VD: 2.2' : 'VD: 7.5'}
+                    placeholder={type === 'motorcycle' ? (isEnglish ? 'e.g. 2.2' : 'VD: 2.2') : (isEnglish ? 'e.g. 7.5' : 'VD: 7.5')}
                     value={consumption || ''}
                     onChange={(e) => setConsumption(parseFloat(e.target.value) || 0)}
                     className={`flex-1 rounded-xl px-3 py-2 text-xs outline-none border font-black ${
@@ -555,7 +562,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-slate-300' : 'text-slate-800'
                   }`}
                 >
-                  Loại nhiên liệu:
+                  {t('fuelTypeLabel')}
                 </label>
                 <div className="grid grid-cols-3 gap-1">
                   {(['ron95', 'ron92', 'diesel'] as const).map((fuel) => (
@@ -563,15 +570,16 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                       key={fuel}
                       type="button"
                       onClick={() => setFuelType(fuel)}
-                      className={`py-1.5 rounded-lg text-[10px] font-black border transition cursor-pointer ${
+                      className={`py-1.5 px-1 rounded-lg text-[10px] font-black border transition cursor-pointer truncate ${
                         fuelType === fuel
                           ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-xs'
                           : isDark
                           ? 'bg-slate-900 border-slate-800 text-slate-400'
                           : 'bg-white border-slate-200 text-slate-700'
                       }`}
+                      title={selectedCountry.fuels[fuel]?.name}
                     >
-                      {fuel.toUpperCase()}
+                      {selectedCountry.fuels[fuel]?.name || fuel.toUpperCase()}
                     </button>
                   ))}
                 </div>
@@ -583,11 +591,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-slate-300' : 'text-slate-800'
                   }`}
                 >
-                  Mô tả động cơ (Tùy chọn):
+                  {t('manualEngineLabel')}
                 </label>
                 <input
                   type="text"
-                  placeholder={type === 'motorcycle' ? 'VD: 150cc' : 'VD: 2.0L'}
+                  placeholder={type === 'motorcycle' ? (isEnglish ? 'e.g. 150cc' : 'VD: 150cc') : (isEnglish ? 'e.g. 2.0L' : 'VD: 2.0L')}
                   value={engine}
                   onChange={(e) => setEngine(e.target.value)}
                   className={`w-full rounded-xl px-3 py-1.5 text-xs outline-none border ${
@@ -604,7 +612,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                 onClick={handleSave}
                 className="w-full mt-2 py-2.5 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-slate-950 transition shadow cursor-pointer active:scale-98"
               >
-                Lưu xe & Áp dụng ngay
+                {t('saveCustomBtn')}
               </button>
             </div>
           )}

@@ -51,7 +51,35 @@ Giao diện chia thành 3 bước độc lập, chuyển bước mượt mà:
   - Tự động đổi hệ đo lường:
     - **Metric (Việt Nam, Châu Á, Châu Âu):** Đơn vị tính là **`Km`**, dung tích **`Lít (L)`**, định mức **`L/100km`**, giá **`₫/lít`** hoặc **`€/L`**.
     - **Imperial (Mỹ):** Đơn vị tính là **`Miles`**, dung tích **`Gallons (gal)`**, định mức **`MPG`**, giá **`$/gal`**.
-  - **Không pha trộn ngôn ngữ:** Khi ở chế độ tiếng Anh/quốc tế, 100% chữ phải là tiếng Anh, không sót bất kỳ từ tiếng Việt nào (`/lít`, `Thêm xe`, `Đóng`...).
+  - **Không pha trộn ngôn ngữ (Zero Vietnamese Leakage):** Khi ở chế độ tiếng Anh/quốc tế, 100% chữ phải là tiếng Anh, không sót bất kỳ từ tiếng Việt nào (`/lít`, `Thêm xe`, `Đóng`...).
+
+### D. Tiêu Chuẩn Bản Địa Hóa Toàn Diện Cho Modal Tra Cứu & Thêm Phương Tiện (Bắt Buộc Nhớ)
+> [!IMPORTANT]
+> **Quy định bất biến chống sót tiếng Việt:** Tuyệt đối không hardcode text tiếng Việt vào bất kỳ nút bấm, tiêu đề hoặc thông báo nào trong `CustomVehicleModal.tsx` và `VehicleSelector.tsx`. Mọi nội dung hiển thị phải đi qua hàm `t(...)` trong `src/i18n/translations.ts` hoặc rẽ nhánh theo `isEnglish`.
+>
+> **Cụ thể các vị trí thường bị sót đã được chốt chuẩn hóa:**
+> 1. **Nút tra cứu:**
+>    - Tiếng Việt: `🔍 Tra cứu thông số kỹ thuật (Cục Đăng Kiểm)`
+>    - Tiếng Anh: `🔍 Look up official specs (EPA / Registry)`
+> 2. **Huy hiệu đã xác thực:**
+>    - Tiếng Việt: `✓ Đã xác thực thông số`
+>    - Tiếng Anh: `✓ Verified Specs`
+> 3. **Nhãn thông số kỹ thuật:**
+>    - Mẫu xe kiểm định: `MẪU XE KIỂM ĐỊNH:` ➔ `OFFICIAL MODEL:`
+>    - Động cơ: `Động cơ:` ➔ `Engine:`
+>    - Nhiên liệu khuyên dùng: `Nhiên liệu khuyên dùng:` ➔ `Recommended fuel:` (và hiển thị đúng tên xăng bản địa như US: `Premium Gasoline (91/93)`, không dùng chữ `RON95` tĩnh).
+>    - Nguồn: `🏛️ Nguồn:` ➔ `🏛️ Source:`
+> 4. **Trường hợp lệch phiên bản (Variant Mismatch):**
+>    - Tiếng Việt: `Không tồn tại phiên bản...` / `Hồ sơ Cục Đăng kiểm không có số hiệu này...` / `Chọn bản này →`
+>    - Tiếng Anh: `Variant not found...` / `Official registry / EPA does not have this variant number...` / `Select this model →`
+> 5. **Trường hợp không tìm thấy (Not Found):**
+>    - Tiếng Việt: `Không tìm thấy thông số cho...` / `Chuỗi ký tự không khớp...`
+>    - Tiếng Anh: `No official specs found for...` / `No matching vehicle in official EPA / Registry records...`
+> 6. **Form nhập tay thủ công (Manual Entry):**
+>    - Tiếng Việt: `📝 Nhập thông số thực tế thủ công:` / `Định mức tiêu hao thực tế:` / `Lưu xe & Áp dụng ngay`
+>    - Tiếng Anh: `📝 Enter manual specifications:` / `Real fuel consumption:` / `Save vehicle & Use now`
+> 7. **Placeholder ô nhập:**
+>    - Phải dùng tiền tố chuẩn: `e.g. Ninja 400, Ducati 821...` thay vì `Ví dụ: ...` khi chuyển sang tiếng Anh.
 
 ---
 
@@ -168,7 +196,8 @@ git push origin main
 
 1. **File APK nộp duyệt:** [`FuelMate-v1.0.apk`](file:///D:/Work/Admob%20ki%E1%BA%BFm%20c%C6%A1m/FuelMate-v1.0.apk).
 2. **Package Name:** `com.fuelmate.fuelcalc`.
-3. **Mục Privacy Policy URL:** Điền đường link:  
+3. **Kiểm tra độ sạch bản địa hóa (Zero Vietnamese Leak):** Chuyển app sang cờ Mỹ (US/English), mở thử Modal Thêm phương tiện mới (`+ Add vehicle`), tra cứu thử 1 xe bất kỳ để bảo đảm 100% tiếng Anh không lọt bất kỳ chuỗi tiếng Việt nào.
+4. **Mục Privacy Policy URL:** Điền đường link:  
    `https://github.com/Saikase/fuelmate-calc/blob/main/PRIVACY_POLICY.md`
-4. **Mục Quảng Cáo (Ad Declaration):** Chọn *"Yes, this app contains ads"*.
-5. **Kích hoạt tiền AdMob:** Khi app được Samsung/Xiaomi duyệt, vào [AdMob Console](https://apps.admob.com/) > Apps > Liên kết kho ứng dụng > Dán link app trên Store vào để bắt đầu nhận doanh thu quảng cáo thật.
+5. **Mục Quảng Cáo (Ad Declaration):** Chọn *"Yes, this app contains ads"*.
+6. **Kích hoạt tiền AdMob:** Khi app được Samsung/Xiaomi duyệt, vào [AdMob Console](https://apps.admob.com/) > Apps > Liên kết kho ứng dụng > Dán link app trên Store vào để bắt đầu nhận doanh thu quảng cáo thật.
