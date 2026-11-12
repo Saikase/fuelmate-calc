@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <!-- Amber Glow Gradient -->
+    <radialGradient id="amberGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Droplet Gradient -->
+    <linearGradient id="dropGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="40%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Gauge Arc Gradient -->
+    <linearGradient id="arcGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+
+    <!-- Soft Drop Shadow -->
+    <filter id="shadow1" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.5" />
+    </filter>
+    <filter id="glowDrop" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#f59e0b" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- Base App Background (Squircle) -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad1)" />
+  <rect width="510" height="510" x="1" y="1" rx="114" fill="none" stroke="#334155" stroke-width="2" stroke-opacity="0.4" />
+
+  <!-- Ambient Amber Glow behind center -->
+  <circle cx="256" cy="270" r="160" fill="url(#amberGlow)" />
+
+  <!-- Gauge Arc (Speedometer / Fuel Gauge) -->
+  <path d="M 120 310 A 155 155 0 1 1 392 310" 
+        fill="none" 
+        stroke="url(#arcGrad)" 
+        stroke-width="18" 
+        stroke-linecap="round" 
+        stroke-dasharray="16 8" />
+
+  <!-- Tick marks at Ends -->
+  <circle cx="120" cy="310" r="6" fill="#64748b" />
+  <text x="100" y="340" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="20" font-weight="900" text-anchor="middle">E</text>
+  <circle cx="392" cy="310" r="6" fill="#10b981" />
+  <text x="412" y="340" fill="#10b981" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="20" font-weight="900" text-anchor="middle">F</text>
+
+  <!-- Central Fuel Droplet (Core Symbol) -->
+  <g filter="url(#glowDrop)">
+    <!-- Liquid drop contour -->
+    <path d="M 256 160 
+             C 256 160, 196 245, 196 295 
+             A 60 60 0 0 0 316 295 
+             C 316 245, 256 160, 256 160 Z" 
+          fill="url(#dropGrad)" />
+
+    <!-- Droplet specular highlight -->
+    <path d="M 242 195 
+             C 242 195, 215 245, 215 275 
+             A 15 25 0 0 1 210 260
+             C 210 235, 242 195, 242 195 Z" 
+          fill="#ffffff" 
+          opacity="0.6" />
+  </g>
+
+  <!-- Gauge Needle (Pointing towards the optimal eco-zone) -->
+  <g filter="url(#shadow1)">
+    <!-- Needle arm -->
+    <polygon points="256,295 249,298 253,190 256,182 259,190 263,298" fill="#ffffff" />
+    <polygon points="256,295 256,182 259,190 263,298" fill="#e2e8f0" />
+    
+    <!-- Needle Center Hub -->
+    <circle cx="256" cy="295" r="16" fill="#0f172a" stroke="#f59e0b" stroke-width="4" />
+    <circle cx="256" cy="295" r="6" fill="#f59e0b" />
+  </g>
+
+  <!-- Modern Accent: Pulse dots below -->
+  <circle cx="226" cy="390" r="4" fill="#334155" />
+  <circle cx="246" cy="390" r="4" fill="#f59e0b" />
+  <circle cx="266" cy="390" r="4" fill="#f59e0b" />
+  <circle cx="286" cy="390" r="4" fill="#334155" />
+</svg>

@@ -98,7 +98,27 @@ Giao diện chia thành 3 bước độc lập, chuyển bước mượt mà:
 
 ---
 
-## 5. Quy Trình Cập Nhật & Đóng Gói Lại Ứng Dụng (Quick Maintenance Cheatsheet)
+## 5. Nhận Diện Thương Hiệu & Bộ Icon Ứng Dụng (Production Icon Assets)
+
+* **Concept được chọn chính thức:** **Concept 3 - Minimalist Fuel Coin** (Giọt xăng 3D tối giản kết hợp đồng xu tiết kiệm).
+* **Tone màu:** Nền xanh đen Midnight Slate (`#0B0F19` - `#0F172A`), biểu tượng giọt nhiên liệu vàng hổ phách 3D (`#FEF08A` -> `#F59E0B` -> `#EA580C`), vết cắt đồng xu tài chính vàng kim (`#FDE68A`).
+* **Đặc tính kỹ thuật:** Thiết kế tuân thủ nghiêm ngặt **Safe Zone 80%**, đảm bảo khi hiển thị trên Samsung One UI và Xiaomi HyperOS hay Pixel Launcher không bị cắt phạm vi biểu tượng.
+* **Tài nguyên ảnh xuất xưởng:**
+  - **Master Store Icon (512x512 px):** [`store_icon_512.png`](file:///D:/Work/Admob%20ki%E1%BA%BFm%20c%C6%A1m/store_icon_512.png) (nằm ngay thư mục gốc dự án, sẵn sàng kéo thả upload lên Samsung Seller Portal và Xiaomi Developer Console).
+  - **Android Adaptive & Legacy Icons:** Được tạo tự động vào `android/app/src/main/res/` cho toàn bộ 5 mật độ phân giải (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`):
+    - `ic_launcher.png` (Squircle)
+    - `ic_launcher_round.png` (Circle)
+    - `ic_launcher_foreground.png` (Adaptive Foreground)
+    - `ic_launcher_background.xml` (`#0F172A`)
+  - **Web Favicon & Apple Touch Icon:** `public/favicon.png`, `public/apple-touch-icon.png`, `public/icon_master.svg`.
+* **Lệnh tái tạo toàn bộ icon một chạm:**
+  ```powershell
+  npm run icons
+  ```
+
+---
+
+## 6. Quy Trình Cập Nhật & Đóng Gói Lại Ứng Dụng (Quick Maintenance Cheatsheet)
 
 Mỗi khi bạn muốn sửa đổi code, thêm mẫu xe hoặc đổi giao diện:
 
