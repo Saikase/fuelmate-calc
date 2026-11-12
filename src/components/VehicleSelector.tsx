@@ -462,7 +462,10 @@ export const VehicleSelector: React.FC<VehicleSelectorProps> = ({
               <span className="font-extrabold text-xs">{selectedVehicle.name}</span>
             </div>
             <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              {selectedVehicle.engineDisplacement} • {t('fuelTypeLabel')} {selectedVehicle.recommendedFuel.toUpperCase()}
+              {selectedVehicle.engineDisplacement} • {t('fuelTypeLabel')}{' '}
+              <span className="font-bold text-amber-500">
+                {selectedCountry.fuels[selectedVehicle.recommendedFuel]?.name || selectedVehicle.recommendedFuel.toUpperCase()}
+              </span>
             </div>
           </div>
 
