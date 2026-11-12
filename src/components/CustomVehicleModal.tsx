@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Vehicle, VehicleType, CountryFuelData } from '../types';
 import { getTranslation } from '../i18n/translations';
+import { lookupVehicleSpec, type VehicleSpecEntry } from '../data/vehicleSpecsDB';
 
 interface CustomVehicleModalProps {
   isOpen: boolean;
@@ -22,12 +23,13 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
   const [brand, setBrand] = useState('');
   const [type, setType] = useState<VehicleType>('motorcycle');
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResult, setSearchResult] = useState<{
-    consumption: number;
-    engine: string;
-    fuelType: 'ron95' | 'ron92' | 'diesel';
-    source: string;
-  } | null>(null);
+  const [searchStatus, setSearchStatus] = useState<'idle' | 'found' | 'not_found'>('idle');
+
+  // Specs when found or manually entered
+  const [consumption, setConsumption] = useState<number>(0);
+  const [engine, setEngine] = useState<string>('');
+  const [fuelType, setFuelType] = useState<'ron95' | 'ron92' | 'diesel'>('ron95');
+  const [source, setSource] = useState<string>('');
 
   if (!isOpen) return null;
 
@@ -38,84 +40,47 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
     if (!vehicleName.trim()) return;
 
     setIsSearching(true);
-    setSearchResult(null);
+    setSearchStatus('idle');
 
     setTimeout(() => {
       setIsSearching(false);
-      const nameLower = vehicleName.toLowerCase();
-      let estConsumption = 2.5;
-      let estEngine = isEnglish ? 'Standard Engine' : 'Động cơ tiêu chuẩn';
-      let estFuel: 'ron95' | 'ron92' | 'diesel' = 'ron95';
+      // Tra cứu từ cơ sở dữ liệu định mức kỹ thuật thực tế
+      const match: VehicleSpecEntry | null = lookupVehicleSpec(vehicleName, brand, type);
 
-      if (type === 'motorcycle') {
-        if (nameLower.includes('110') || nameLower.includes('blade') || nameLower.includes('sirius') || nameLower.includes('wave')) {
-          estConsumption = 1.7;
-          estEngine = '110cc - 115cc SOHC';
-          estFuel = 'ron92';
-        } else if (nameLower.includes('125') || nameLower.includes('lead') || nameLower.includes('vision') || nameLower.includes('janus')) {
-          estConsumption = 1.95;
-          estEngine = '125cc SOHC';
-        } else if (nameLower.includes('150') || nameLower.includes('155') || nameLower.includes('160') || nameLower.includes('vario') || nameLower.includes('nvx')) {
-          estConsumption = 2.35;
-          estEngine = '150cc - 160cc';
-        } else if (nameLower.includes('300') || nameLower.includes('350') || nameLower.includes('400') || nameLower.includes('ninja') || nameLower.includes('rebel')) {
-          estConsumption = 3.8;
-          estEngine = '300cc - 400cc Twin';
-        } else if (nameLower.includes('harley') || nameLower.includes('883') || nameLower.includes('1000') || nameLower.includes('bmw') || nameLower.includes('ducati')) {
-          estConsumption = 5.1;
-          estEngine = 'Heavy Cruiser / Big Bike > 800cc';
-        } else {
-          estConsumption = 2.4;
-          estEngine = isEnglish ? 'Standard Motorcycle Engine' : 'Xe máy phổ thông';
+      if (match) {
+        // TÌM THẤY TRONG DATABASE CHÍNH HÃNG / CỤC ĐĂNG KIỂM
+        setSearchStatus('found');
+        setConsumption(match.consumption);
+        setEngine(match.engine);
+        setFuelType(match.fuelType);
+        setSource(match.source);
+        setType(match.type);
+        if (!brand.trim()) {
+          setBrand(match.brand);
         }
       } else {
-        // Car
-        if (nameLower.includes('dầu') || nameLower.includes('diesel')) {
-          estConsumption = 7.4;
-          estEngine = 'Turbo Diesel';
-          estFuel = 'diesel';
-        } else if (nameLower.includes('hybrid') || nameLower.includes('hev')) {
-          estConsumption = 4.3;
-          estEngine = isEnglish ? 'Gasoline-Electric Hybrid' : 'Xăng lai Điện (Hybrid)';
-        } else if (nameLower.includes('i10') || nameLower.includes('morning') || nameLower.includes('fadil') || nameLower.includes('wigo') || nameLower.includes('attrage')) {
-          estConsumption = 5.4;
-          estEngine = '1.0L - 1.4L Compact';
-        } else if (nameLower.includes('vios') || nameLower.includes('accent') || nameLower.includes('city') || nameLower.includes('mazda 2')) {
-          estConsumption = 5.8;
-          estEngine = '1.5L Subcompact';
-        } else if (nameLower.includes('cx-5') || nameLower.includes('tucson') || nameLower.includes('cr-v') || nameLower.includes('cross') || nameLower.includes('seltos')) {
-          estConsumption = 7.2;
-          estEngine = '1.5L - 2.0L Compact SUV';
-        } else if (nameLower.includes('f-150') || nameLower.includes('silverado') || nameLower.includes('ranger raptor') || nameLower.includes('v8')) {
-          estConsumption = 11.8;
-          estEngine = 'V6 / V8 Full-size Truck';
-        } else {
-          estConsumption = 7.0;
-          estEngine = isEnglish ? 'Standard Gasoline Engine' : 'Động cơ xăng hỗn hợp';
-        }
+        // KHÔNG TÌM THẤY (chuỗi ngẫu nhiên hoặc không có trong hồ sơ)
+        // Tuyệt đối KHÔNG giả lập thông số ảo 7.0 L/100km!
+        setSearchStatus('not_found');
+        setConsumption(0);
+        setEngine('');
+        setSource('');
       }
-
-      setSearchResult({
-        consumption: estConsumption,
-        engine: estEngine,
-        fuelType: estFuel,
-        source: isEnglish ? 'Official manufacturer technical documentation' : 'Tài liệu kỹ thuật công khai của nhà sản xuất',
-      });
-    }, 600);
+    }, 400);
   };
 
   const handleSave = () => {
-    if (!vehicleName.trim() || !searchResult) return;
+    if (!vehicleName.trim() || consumption <= 0) return;
 
     const newVehicle: Vehicle = {
       id: `custom-${Date.now()}`,
       name: vehicleName.trim(),
       brand: brand.trim() || (isEnglish ? 'Custom' : 'Tùy chỉnh'),
       type,
-      fuelConsumption: searchResult.consumption,
-      fuelType: searchResult.fuelType === 'diesel' ? 'diesel' : 'gasoline',
-      engineDisplacement: searchResult.engine,
-      recommendedFuel: searchResult.fuelType,
+      fuelConsumption: consumption,
+      fuelType: fuelType === 'diesel' ? 'diesel' : 'gasoline',
+      engineDisplacement: engine.trim() || (type === 'motorcycle' ? '125cc' : '1.5L'),
+      recommendedFuel: fuelType,
       popular: true,
       regions: ['GLOBAL'],
     };
@@ -153,25 +118,33 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
           <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-950 text-xs font-bold border border-slate-200 dark:border-slate-800">
             <button
               type="button"
-              onClick={() => setType('motorcycle')}
-              className={`py-1.5 rounded-lg transition cursor-pointer ${
+              onClick={() => {
+                setType('motorcycle');
+                setSearchStatus('idle');
+              }}
+              className={`py-1.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
                 type === 'motorcycle'
                   ? 'bg-amber-500 text-slate-950 shadow-xs'
                   : 'text-slate-500 dark:text-slate-400'
               }`}
             >
-              {t('motorcycleTab')}
+              <span>🏍️</span>
+              <span>{t('motorcycleTab')}</span>
             </button>
             <button
               type="button"
-              onClick={() => setType('car')}
-              className={`py-1.5 rounded-lg transition cursor-pointer ${
+              onClick={() => {
+                setType('car');
+                setSearchStatus('idle');
+              }}
+              className={`py-1.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
                 type === 'car'
                   ? 'bg-amber-500 text-slate-950 shadow-xs'
                   : 'text-slate-500 dark:text-slate-400'
               }`}
             >
-              {t('carTab')}
+              <span>🚗</span>
+              <span>{t('carTab')}</span>
             </button>
           </div>
 
@@ -183,8 +156,15 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               type="text"
               required
               value={vehicleName}
-              onChange={(e) => setVehicleName(e.target.value)}
-              placeholder={t('vehicleNamePlaceholder')}
+              onChange={(e) => {
+                setVehicleName(e.target.value);
+                if (searchStatus !== 'idle') setSearchStatus('idle');
+              }}
+              placeholder={
+                type === 'motorcycle'
+                  ? 'Ví dụ: Ninja 400, Ducati 821, Vario 160, Raider...'
+                  : 'Ví dụ: Innova 2.0, Territory, G63, Veloz, VF3...'
+              }
               className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border transition ${
                 isDark
                   ? 'bg-slate-950 border-slate-700 text-white focus:border-amber-500'
@@ -201,7 +181,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               type="text"
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
-              placeholder={t('brandPlaceholder')}
+              placeholder="Honda, Yamaha, Toyota, Ford, Ducati..."
               className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border transition ${
                 isDark
                   ? 'bg-slate-950 border-slate-700 text-white focus:border-amber-500'
@@ -213,49 +193,63 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
           <button
             type="submit"
             disabled={isSearching || !vehicleName.trim()}
-            className="w-full py-2.5 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 transition cursor-pointer shadow disabled:opacity-50"
+            className="w-full py-2.5 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 transition cursor-pointer shadow disabled:opacity-50 flex items-center justify-center gap-1.5"
           >
-            {isSearching ? t('searchingBtn') : t('searchOnlineBtn')}
+            {isSearching ? (
+              <>
+                <span className="inline-block animate-spin">⏳</span>
+                <span>{t('searchingBtn')}</span>
+              </>
+            ) : (
+              <>
+                <span>🔍</span>
+                <span>Tra cứu thông số kỹ thuật (Cục Đăng Kiểm)</span>
+              </>
+            )}
           </button>
 
-          {/* Search Result Box */}
-          {searchResult && (
+          {/* TRƯỜNG HỢP 1: TÌM THẤY TRONG DATABASE */}
+          {searchStatus === 'found' && (
             <div
-              className={`p-3.5 rounded-2xl border space-y-2 ${
-                isDark ? 'bg-slate-950 border-emerald-500/40' : 'bg-emerald-50 border-emerald-200'
+              className={`p-3.5 rounded-2xl border space-y-2.5 animate-fadeIn ${
+                isDark ? 'bg-slate-950 border-emerald-500/50' : 'bg-emerald-50/80 border-emerald-300'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                  {t('foundSpecsTitle')}
+                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <span>✓</span>
+                  <span>Đã xác thực thông số kỹ thuật</span>
                 </span>
-                <span className="text-xs font-black text-amber-500">
-                  {searchResult.consumption} L/100km
+                <span className="text-sm font-black text-amber-500">
+                  {consumption} L/100km
                 </span>
               </div>
 
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
-                <div>{t('engineLabel')} <strong>{searchResult.engine}</strong></div>
-                <div>{t('fuelTypeLabel')} <strong>{searchResult.fuelType.toUpperCase()}</strong></div>
-                <div className="opacity-75">{searchResult.source}</div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 bg-black/10 dark:bg-black/30 p-2.5 rounded-xl">
+                <div>
+                  {t('engineLabel')} <strong className="text-slate-800 dark:text-slate-200">{engine}</strong>
+                </div>
+                <div>
+                  {t('fuelTypeLabel')}{' '}
+                  <strong className="text-amber-500">{fuelType.toUpperCase()}</strong>
+                </div>
+                <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800 flex items-center gap-1">
+                  <span>🏛️</span>
+                  <span>Nguồn: {source}</span>
+                </div>
               </div>
 
-              {/* Allow adjusting the number */}
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-                <span>{t('adjustIfDesired')}</span>
+              {/* Cho phép tinh chỉnh nếu người dùng muốn */}
+              <div className="pt-1 flex items-center justify-between text-xs">
+                <span className="text-slate-500">{t('adjustIfDesired')}</span>
                 <div className="flex items-center gap-1">
                   <input
                     type="number"
-                    step="0.1"
-                    min="0.5"
-                    max="30"
-                    value={searchResult.consumption}
-                    onChange={(e) =>
-                      setSearchResult({
-                        ...searchResult,
-                        consumption: parseFloat(e.target.value) || 0,
-                      })
-                    }
+                    step="0.05"
+                    min="0.1"
+                    max="40"
+                    value={consumption}
+                    onChange={(e) => setConsumption(parseFloat(e.target.value) || 0)}
                     className="w-16 rounded px-1.5 py-0.5 text-right font-bold bg-slate-800 text-white border border-slate-600 text-xs"
                   />
                   <span>L/100km</span>
@@ -265,10 +259,108 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               <button
                 type="button"
                 onClick={handleSave}
-                className="w-full mt-2 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow cursor-pointer"
+                className="w-full mt-2 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow cursor-pointer active:scale-98"
               >
                 {t('addAndSelectBtn')}
               </button>
+            </div>
+          )}
+
+          {/* TRƯỜNG HỢP 2: KHÔNG TÌM THẤY (Chuỗi ngẫu nhiên hoặc xe chưa có trong hồ sơ) */}
+          {searchStatus === 'not_found' && (
+            <div
+              className={`p-3.5 rounded-2xl border space-y-2.5 animate-fadeIn ${
+                isDark ? 'bg-slate-950 border-amber-500/40' : 'bg-amber-50/70 border-amber-200'
+              }`}
+            >
+              <div className="flex items-start gap-2">
+                <span className="text-amber-500 text-base">⚠️</span>
+                <div>
+                  <div className="text-xs font-bold text-amber-500">
+                    Không tìm thấy dữ liệu cho &quot;{vehicleName}&quot;
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">
+                    Tên xe không khớp với hồ sơ kỹ thuật của Cục Đăng kiểm hoặc Nhà sản xuất. Bạn vui lòng tự nhập định mức tiêu hao thực tế bên dưới:
+                  </div>
+                </div>
+              </div>
+
+              {/* Form nhập định mức thủ công */}
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                <div>
+                  <label className="text-[11px] font-bold block mb-1">
+                    Mức tiêu hao thực tế (L/100km): *
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      max="40"
+                      required
+                      placeholder={type === 'motorcycle' ? 'VD: 2.2' : 'VD: 6.8'}
+                      value={consumption || ''}
+                      onChange={(e) => setConsumption(parseFloat(e.target.value) || 0)}
+                      className={`flex-1 rounded-xl px-3 py-1.5 text-xs outline-none border font-bold ${
+                        isDark
+                          ? 'bg-slate-900 border-slate-700 text-white focus:border-amber-500'
+                          : 'bg-white border-slate-300 text-slate-900 focus:border-amber-600'
+                      }`}
+                    />
+                    <span className="text-xs font-bold text-slate-400">L/100km</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold block mb-1">
+                    Loại nhiên liệu:
+                  </label>
+                  <div className="grid grid-cols-3 gap-1">
+                    {(['ron95', 'ron92', 'diesel'] as const).map((fuel) => (
+                      <button
+                        key={fuel}
+                        type="button"
+                        onClick={() => setFuelType(fuel)}
+                        className={`py-1 rounded-lg text-[10px] font-bold border transition cursor-pointer ${
+                          fuelType === fuel
+                            ? 'bg-amber-500 border-amber-500 text-slate-950'
+                            : isDark
+                            ? 'bg-slate-900 border-slate-800 text-slate-400'
+                            : 'bg-white border-slate-200 text-slate-600'
+                        }`}
+                      >
+                        {fuel.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold block mb-1">
+                    Mô tả động cơ (Tùy chọn):
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={type === 'motorcycle' ? 'VD: 150cc' : 'VD: 1.5L Turbo'}
+                    value={engine}
+                    onChange={(e) => setEngine(e.target.value)}
+                    className={`w-full rounded-xl px-3 py-1.5 text-xs outline-none border ${
+                      isDark
+                        ? 'bg-slate-900 border-slate-700 text-white'
+                        : 'bg-white border-slate-300 text-slate-900'
+                    }`}
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  disabled={consumption <= 0}
+                  onClick={handleSave}
+                  className="w-full mt-2 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-slate-950 transition shadow cursor-pointer active:scale-98"
+                >
+                  Lưu xe & Áp dụng ngay
+                </button>
+              </div>
             </div>
           )}
         </form>
