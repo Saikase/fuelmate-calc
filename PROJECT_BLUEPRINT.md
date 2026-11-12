@@ -94,6 +94,37 @@ Modal **Lịch sử & Lịch xài xăng** được chia làm 2 tab chuyên biệ
      - Bấm vào từng ngày để xem chi tiết số tiền đã xài.
    - **Điều hướng tháng & Danh sách đối soát các tháng:** Cho phép người dùng chuyển qua lại giữa các tháng (Tháng này, tháng trước,...) để theo dõi biến động chi tiêu xăng xe qua thời gian.
 
+### F. Kiến Trúc Xe Điện Toàn Diện (EV Architecture) & Biểu Phí Sạc Công Khai
+1. **Tách biệt hoàn toàn VinFast khỏi dòng xe xăng:** VinFast đã chính thức dừng sản xuất xe xăng từ năm 2022. Toàn bộ xe hơi VinFast (VF 3, VF 5 Plus, VF e34, VF 6, VF 7, VF 8, VF 9) cùng các dòng xe máy điện (Evo 200, Feliz S, Klara S, Theon S, Dat Bike Quantum...) nằm trọn vẹn trong tab **`⚡ Xe Điện (EV)`**.
+2. **Giao diện bộ chọn xe điện (EV Fleet Selector):**
+   - Tab chính thứ 3: **`⚡ Xe Điện (EV)`**.
+   - Bộ lọc phụ chuyên biệt: **`⚡ Tất cả`**, **`🚗 Ô tô điện`**, **`🛵 Xe máy điện`**.
+   - Tìm kiếm thông minh tự động nhảy tab: Gõ các từ khóa `vinfast`, `vf3`, `vf5`, `vf8`, `dat bike`, `evo`, `tesla`, `byd` tự động chuyển sang tab xe điện.
+3. **Cơ chế tính toán & Biểu phí sạc điện công khai chuẩn xác:**
+   - **Đơn vị định mức:** **`kWh/100km`** (hoặc `kWh/100mi`).
+   - **Nguồn sạc công khai tích hợp cho 22 quốc gia:**
+     - **Trạm sạc nhanh công cộng (Fast Public Charger):**
+       - Việt Nam: Trạm sạc V-GREEN (VinFast) công khai **`3.858 ₫/kWh`** (đã bao gồm VAT).
+       - Mỹ: Tesla Supercharger / Electrify America trung bình **`$0.42/kWh`**.
+       - Thái Lan: PEA/PTT EV Station **`7.50 ฿/kWh`**.
+       - Đức & EU: Ionity / EnBW **`0.55 €/kWh`**.
+       - Nhật Bản: e-MP Quick Charge **`¥45/kWh`**.
+     - **Sạc tại nhà (Home Residential):**
+       - Việt Nam: EVN sinh hoạt bậc 3-4 trung bình **`2.600 ₫/kWh`**.
+       - Mỹ: US EIA gia đình trung bình **`$0.17/kWh`**.
+   - **Công thức:** `Điện năng tiêu thụ (kWh) = (Quãng đường / 100) * Định mức (kWh/100km)`. `Tổng chi phí sạc = Điện năng * Đơn giá sạc`.
+   - **Thẻ tiết kiệm năng lượng:** Hiển thị tự động thông điệp so sánh chi phí `⚡ Tiết kiệm hơn ~65-75% chi phí so với xe xăng!`.
+
+### G. Quy Tắc Vàng Kiểm Soát Dữ Liệu Tra Cứu & Tránh Lỗi Sai Lệch (Strict Spec DB Lookup Rules)
+> [!IMPORTANT]
+> **Bộ 5 quy tắc bất biến khi tra cứu thông số kỹ thuật xe:**
+> 1. **Khớp đúng chủng loại (Type Strictness):** Đang ở tab Xe máy thì các dòng xe ô tô (như Toyota Innova, Camry) tuyệt đối không match; đang ở Ô tô thì xe máy (Wave, SH) tuyệt đối không match.
+> 2. **Không match khi thương hiệu mâu thuẫn (Brand Conflict Rejection):** Nếu người dùng chọn/nhập Hãng là `Toyota` mà tên xe là `Ducati` (hoặc hãng khác), hệ thống **bắt buộc trả về `not_found`**, tuyệt đối không match sang `Ducati Monster 821`.
+> 3. **Không match bừa khi người dùng chỉ gõ tên hãng (Generic Brand Search):** Khi người dùng chỉ nhập tên một hãng như `Ducati`, `Honda`, `Toyota`, `VinFast`, `Tesla`: Hệ thống không được tự ý gán cho một chiếc xe ngẫu nhiên làm `exact_found` mà phải trả về `variant_mismatch` với danh sách gợi ý các mẫu xe tiêu biểu của hãng đó để người dùng tự chọn.
+> 4. **Bác bỏ số hiệu ảo / phiên bản không tồn tại:** Nhập `Innova 999.0`, `Wave 9999` sẽ nhận diện dòng xe gốc và trả về `variant_mismatch` gợi ý các phiên bản thực tế đã đăng kiểm (Innova 2.0, Wave Alpha 110).
+> 5. **Từ chối chuỗi ngẫu nhiên:** Nhập các chuỗi vô nghĩa (`asdjkhaksd`, `123891238`) dứt khoát trả về `not_found`.
+> 6. **Độ tương phản cao (High Contrast UI):** Khung kết quả tra cứu tuyệt đối không dùng màu xám đục khó đọc. Phải dùng nền sạch sáng `bg-slate-50` / tối `bg-slate-950`, viền xanh ngọc `emerald-500`, chữ đậm rõ nét đảm bảo hiển thị xuất sắc dưới mọi điều kiện ánh sáng.
+
 ---
 
 ## 3. Kiến Trúc Kỹ Thuật (Tech Stack)

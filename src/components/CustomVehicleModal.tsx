@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Vehicle, VehicleType, CountryFuelData } from '../types';
+import type { Vehicle, VehicleType, CountryFuelData, FuelKey } from '../types';
 import { getTranslation } from '../i18n/translations';
 import { lookupVehicleSpec, type VehicleSpecEntry, type LookupResult } from '../data/vehicleSpecsDB';
 
@@ -35,13 +35,14 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
   // Specs when found or manually entered
   const [consumption, setConsumption] = useState<number>(0);
   const [engine, setEngine] = useState<string>('');
-  const [fuelType, setFuelType] = useState<'ron95' | 'ron92' | 'diesel'>('ron95');
+  const [fuelType, setFuelType] = useState<FuelKey>('ron95');
   const [source, setSource] = useState<string>('');
   const [showManualForm, setShowManualForm] = useState(false);
 
   if (!isOpen) return null;
 
   const isEnglish = selectedCountry.language !== 'vi';
+  const unitLabel = type === 'electric' ? 'kWh/100km' : 'L/100km';
 
   const handleOnlineLookup = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,15 +96,35 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
   const handleSave = () => {
     if (!vehicleName.trim() || consumption <= 0) return;
 
+    const isEv = type === 'electric';
+    const lowerName = vehicleName.toLowerCase();
+    const isEvMotorcycle =
+      isEv &&
+      (lowerName.includes('bike') ||
+        lowerName.includes('scooter') ||
+        lowerName.includes('evo') ||
+        lowerName.includes('feliz') ||
+        lowerName.includes('klara') ||
+        lowerName.includes('theon') ||
+        lowerName.includes('yadea') ||
+        lowerName.includes('vinfast evo') ||
+        lowerName.includes('zero'));
+
     const newVehicle: Vehicle = {
       id: `custom-${Date.now()}`,
       name: vehicleName.trim(),
       brand: brand.trim() || (isEnglish ? 'Custom' : 'Tùy chỉnh'),
       type,
+      evSubtype: isEv ? (isEvMotorcycle ? 'electric_motorcycle' : 'electric_car') : undefined,
       fuelConsumption: consumption,
-      fuelType: fuelType === 'diesel' ? 'diesel' : 'gasoline',
-      engineDisplacement: engine.trim() || (type === 'motorcycle' ? '125cc' : '1.5L'),
-      recommendedFuel: fuelType,
+      fuelType: isEv ? 'electric' : fuelType === 'diesel' ? 'diesel' : 'gasoline',
+      engineDisplacement:
+        engine.trim() || (isEv ? (isEvMotorcycle ? 'Pin LFP 3.5 kWh' : 'Pin EV') : type === 'motorcycle' ? '125cc' : '1.5L'),
+      recommendedFuel: isEv
+        ? fuelType === 'electricHome'
+          ? 'electricHome'
+          : 'electricFast'
+        : fuelType,
       popular: true,
       regions: ['GLOBAL'],
     };
@@ -143,9 +164,9 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
         </div>
 
         <form onSubmit={handleOnlineLookup} className="space-y-3 my-3 flex-1 overflow-y-auto pr-1">
-          {/* Type selector */}
+          {/* 3 Type tabs: Motorcycles, Cars, EV */}
           <div
-            className={`grid grid-cols-2 gap-1.5 p-1 rounded-xl text-xs font-bold border ${
+            className={`grid grid-cols-3 gap-1 p-1 rounded-xl text-xs font-bold border ${
               isDark
                 ? 'bg-slate-950 border-slate-800 text-slate-400'
                 : 'bg-slate-100 border-slate-200 text-slate-600'
@@ -155,6 +176,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               type="button"
               onClick={() => {
                 setType('motorcycle');
+                setFuelType('ron95');
                 setLookupState({ status: 'idle' });
               }}
               className={`py-1.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
@@ -166,12 +188,13 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               }`}
             >
               <span>🏍️</span>
-              <span>{t('motorcycleTab')}</span>
+              <span className="truncate">{t('motorcycleTab')}</span>
             </button>
             <button
               type="button"
               onClick={() => {
                 setType('car');
+                setFuelType('ron95');
                 setLookupState({ status: 'idle' });
               }}
               className={`py-1.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
@@ -183,7 +206,25 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               }`}
             >
               <span>🚗</span>
-              <span>{t('carTab')}</span>
+              <span className="truncate">{t('carTab')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setType('electric');
+                setFuelType('electricFast');
+                setLookupState({ status: 'idle' });
+              }}
+              className={`py-1.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
+                type === 'electric'
+                  ? 'bg-emerald-500 text-slate-950 shadow-xs font-black'
+                  : isDark
+                  ? 'text-emerald-400 hover:text-emerald-200'
+                  : 'text-emerald-700 hover:text-emerald-950'
+              }`}
+            >
+              <span>⚡</span>
+              <span className="truncate">{t('electricTab')}</span>
             </button>
           </div>
 
@@ -204,7 +245,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                 if (lookupState.status !== 'idle') setLookupState({ status: 'idle' });
               }}
               placeholder={
-                type === 'motorcycle'
+                type === 'electric'
+                  ? isEnglish
+                    ? 'e.g. VF 3, VF 5, VF 6, Tesla Model 3, Dat Bike...'
+                    : 'Ví dụ: VF 3, VF 5, VF 6, Tesla Model 3, Evo 200...'
+                  : type === 'motorcycle'
                   ? isEnglish
                     ? 'e.g. Ninja 400, Ducati 821, Rebel 500...'
                     : 'Ví dụ: Ninja 400, Ducati 821, Vario 160...'
@@ -233,7 +278,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
               placeholder={
-                isEnglish
+                type === 'electric'
+                  ? isEnglish
+                    ? 'VinFast, Tesla, BYD, Dat Bike, Yadea...'
+                    : 'VinFast, Dat Bike, Tesla, BYD, Yadea...'
+                  : isEnglish
                   ? 'Honda, Yamaha, Ford, BMW, Ducati...'
                   : 'Honda, Yamaha, Toyota, Ford, Ducati...'
               }
@@ -248,7 +297,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
           <button
             type="submit"
             disabled={isSearching || !vehicleName.trim()}
-            className="w-full py-2.5 rounded-xl font-black text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 transition cursor-pointer shadow disabled:opacity-50 flex items-center justify-center gap-1.5 active:scale-98"
+            className={`w-full py-2.5 rounded-xl font-black text-xs transition cursor-pointer shadow disabled:opacity-50 flex items-center justify-center gap-1.5 active:scale-98 ${
+              type === 'electric'
+                ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-950'
+                : 'bg-amber-500 hover:bg-amber-600 text-slate-950'
+            }`}
           >
             {isSearching ? (
               <>
@@ -263,7 +316,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
             )}
           </button>
 
-          {/* TRƯỜNG HỢP 1: TÌM THẤY CHÍNH XÁC (EXACT MATCH) - GIAO DIỆN TƯƠNG PHẢN CAO SẮC NÉT */}
+          {/* TRƯỜNG HỢP 1: TÌM THẤY CHÍNH XÁC (EXACT MATCH) - GIAO DIỆN SẮC NÉT TƯƠNG PHẢN CAO */}
           {lookupState.status === 'exact_found' && (
             <div
               className={`p-4 rounded-2xl border-2 space-y-3 animate-fadeIn transition shadow-sm ${
@@ -287,7 +340,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-emerald-400' : 'text-emerald-600'
                   }`}
                 >
-                  {consumption} L/100km
+                  {consumption} {unitLabel}
                 </span>
               </div>
 
@@ -322,7 +375,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                   }`}
                 >
                   <span className={isDark ? 'text-slate-400 font-medium' : 'text-slate-600 font-semibold'}>
-                    {t('engineLabel')}
+                    {type === 'electric' ? (isEnglish ? 'Battery / Motor' : 'Pin / Động cơ') : t('engineLabel')}
                   </span>
                   <span className={`font-black ${isDark ? 'text-white' : 'text-slate-950'}`}>
                     {engine}
@@ -331,10 +384,17 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
 
                 <div className="flex items-center justify-between">
                   <span className={isDark ? 'text-slate-400 font-medium' : 'text-slate-600 font-semibold'}>
-                    {t('fuelTypeLabel')}
+                    {type === 'electric' ? (isEnglish ? 'Charging tariff' : 'Nguồn điện / Giá') : t('fuelTypeLabel')}
                   </span>
-                  <span className="font-black px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[11px]">
-                    {selectedCountry.fuels[fuelType]?.name || fuelType.toUpperCase()}
+                  <span className={`font-black px-2 py-0.5 rounded text-[11px] ${
+                    type === 'electric' ? 'bg-emerald-500 text-slate-950' : 'bg-amber-500 text-slate-950'
+                  }`}>
+                    {selectedCountry.fuels[fuelType]?.name ||
+                      (fuelType === 'electricFast'
+                        ? 'Trạm sạc nhanh (Fast)'
+                        : fuelType === 'electricHome'
+                        ? 'Sạc tại nhà (Home)'
+                        : fuelType.toUpperCase())}
                   </span>
                 </div>
 
@@ -366,7 +426,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     type="number"
                     step="0.05"
                     min="0.1"
-                    max="40"
+                    max="50"
                     value={consumption}
                     onChange={(e) => setConsumption(parseFloat(e.target.value) || 0)}
                     className={`w-20 rounded-lg px-2 py-1 text-center font-black text-sm border-2 ${
@@ -376,7 +436,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     }`}
                   />
                   <span className={`font-bold text-xs ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>
-                    L/100km
+                    {unitLabel}
                   </span>
                 </div>
               </div>
@@ -438,7 +498,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                   >
                     <div>
                       <div className="text-xs font-black flex items-center gap-1.5 text-slate-950 dark:text-white">
-                        <span>{s.type === 'motorcycle' ? '🏍️' : '🚗'}</span>
+                        <span>{s.type === 'electric' ? '⚡' : s.type === 'motorcycle' ? '🏍️' : '🚗'}</span>
                         <span>{s.modelName}</span>
                       </div>
                       <div
@@ -455,7 +515,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                           isDark ? 'text-amber-400' : 'text-amber-700'
                         }`}
                       >
-                        {s.consumption} L/100km
+                        {s.consumption} {s.type === 'electric' ? 'kWh/100km' : 'L/100km'}
                       </div>
                       <div className="text-[9px] text-emerald-600 font-bold">{t('selectThisVariant')}</div>
                     </div>
@@ -463,7 +523,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                 ))}
               </div>
 
-              {/* Nút bật form nhập tay nếu người dùng kiên quyết muốn thêm xe tự tạo */}
+              {/* Nút bật form nhập tay nếu người dùng muốn tự tạo xe riêng */}
               {!showManualForm && (
                 <button
                   type="button"
@@ -532,16 +592,30 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-slate-300' : 'text-slate-800'
                   }`}
                 >
-                  {t('manualConsumptionLabel')} (L/100km): *
+                  {type === 'electric'
+                    ? isEnglish
+                      ? 'Electricity Consumption (kWh/100km): *'
+                      : 'Định mức tiêu thụ điện (kWh/100km): *'
+                    : `${t('manualConsumptionLabel')} (L/100km): *`}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     step="0.1"
                     min="0.1"
-                    max="40"
+                    max="50"
                     required
-                    placeholder={type === 'motorcycle' ? (isEnglish ? 'e.g. 2.2' : 'VD: 2.2') : (isEnglish ? 'e.g. 7.5' : 'VD: 7.5')}
+                    placeholder={
+                      type === 'electric'
+                        ? '8.3'
+                        : type === 'motorcycle'
+                        ? isEnglish
+                          ? 'e.g. 2.2'
+                          : 'VD: 2.2'
+                        : isEnglish
+                        ? 'e.g. 7.5'
+                        : 'VD: 7.5'
+                    }
                     value={consumption || ''}
                     onChange={(e) => setConsumption(parseFloat(e.target.value) || 0)}
                     className={`flex-1 rounded-xl px-3 py-2 text-xs outline-none border font-black ${
@@ -551,7 +625,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     }`}
                   />
                   <span className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                    L/100km
+                    {unitLabel}
                   </span>
                 </div>
               </div>
@@ -562,27 +636,62 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-slate-300' : 'text-slate-800'
                   }`}
                 >
-                  {t('fuelTypeLabel')}
+                  {type === 'electric'
+                    ? isEnglish
+                      ? 'Charging Tariff Option:'
+                      : 'Loại sạc điện:'
+                    : t('fuelTypeLabel')}
                 </label>
-                <div className="grid grid-cols-3 gap-1">
-                  {(['ron95', 'ron92', 'diesel'] as const).map((fuel) => (
+                {type === 'electric' ? (
+                  <div className="grid grid-cols-2 gap-1.5">
                     <button
-                      key={fuel}
                       type="button"
-                      onClick={() => setFuelType(fuel)}
-                      className={`py-1.5 px-1 rounded-lg text-[10px] font-black border transition cursor-pointer truncate ${
-                        fuelType === fuel
-                          ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-xs'
+                      onClick={() => setFuelType('electricFast')}
+                      className={`py-2 px-1 rounded-lg text-[10px] font-black border transition cursor-pointer truncate ${
+                        fuelType === 'electricFast'
+                          ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-xs'
                           : isDark
                           ? 'bg-slate-900 border-slate-800 text-slate-400'
                           : 'bg-white border-slate-200 text-slate-700'
                       }`}
-                      title={selectedCountry.fuels[fuel]?.name}
                     >
-                      {selectedCountry.fuels[fuel]?.name || fuel.toUpperCase()}
+                      ⚡ {selectedCountry.fuels.electricFast?.name || (isEnglish ? 'Fast Public Charger' : 'Trạm sạc nhanh')}
                     </button>
-                  ))}
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => setFuelType('electricHome')}
+                      className={`py-2 px-1 rounded-lg text-[10px] font-black border transition cursor-pointer truncate ${
+                        fuelType === 'electricHome'
+                          ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-xs'
+                          : isDark
+                          ? 'bg-slate-900 border-slate-800 text-slate-400'
+                          : 'bg-white border-slate-200 text-slate-700'
+                      }`}
+                    >
+                      🏠 {selectedCountry.fuels.electricHome?.name || (isEnglish ? 'Home Charging' : 'Sạc tại nhà')}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-1">
+                    {(['ron95', 'ron92', 'diesel'] as const).map((fuel) => (
+                      <button
+                        key={fuel}
+                        type="button"
+                        onClick={() => setFuelType(fuel)}
+                        className={`py-1.5 px-1 rounded-lg text-[10px] font-black border transition cursor-pointer truncate ${
+                          fuelType === fuel
+                            ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-xs'
+                            : isDark
+                            ? 'bg-slate-900 border-slate-800 text-slate-400'
+                            : 'bg-white border-slate-200 text-slate-700'
+                        }`}
+                        title={selectedCountry.fuels[fuel]?.name}
+                      >
+                        {selectedCountry.fuels[fuel]?.name || fuel.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -591,11 +700,27 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     isDark ? 'text-slate-300' : 'text-slate-800'
                   }`}
                 >
-                  {t('manualEngineLabel')}
+                  {type === 'electric'
+                    ? isEnglish
+                      ? 'Battery Capacity / Motor (Optional):'
+                      : 'Dung lượng pin / Động cơ (Tùy chọn):'
+                    : t('manualEngineLabel')}
                 </label>
                 <input
                   type="text"
-                  placeholder={type === 'motorcycle' ? (isEnglish ? 'e.g. 150cc' : 'VD: 150cc') : (isEnglish ? 'e.g. 2.0L' : 'VD: 2.0L')}
+                  placeholder={
+                    type === 'electric'
+                      ? isEnglish
+                        ? 'e.g. 18.64 kWh battery, 43 HP'
+                        : 'VD: Pin 18.64 kWh, 43 mã lực'
+                      : type === 'motorcycle'
+                      ? isEnglish
+                        ? 'e.g. 150cc'
+                        : 'VD: 150cc'
+                      : isEnglish
+                      ? 'e.g. 2.0L'
+                      : 'VD: 2.0L'
+                  }
                   value={engine}
                   onChange={(e) => setEngine(e.target.value)}
                   className={`w-full rounded-xl px-3 py-1.5 text-xs outline-none border ${
@@ -610,7 +735,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                 type="button"
                 disabled={consumption <= 0}
                 onClick={handleSave}
-                className="w-full mt-2 py-2.5 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-slate-950 transition shadow cursor-pointer active:scale-98"
+                className={`w-full mt-2 py-2.5 rounded-xl text-xs font-black disabled:opacity-40 text-slate-950 transition shadow cursor-pointer active:scale-98 ${
+                  type === 'electric'
+                    ? 'bg-emerald-500 hover:bg-emerald-600'
+                    : 'bg-amber-500 hover:bg-amber-600'
+                }`}
               >
                 {t('saveCustomBtn')}
               </button>

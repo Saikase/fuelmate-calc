@@ -1,10 +1,10 @@
 export interface VehicleSpecEntry {
   modelName: string;
   brand: string;
-  type: 'motorcycle' | 'car';
+  type: 'motorcycle' | 'car' | 'electric';
   engine: string;
-  consumption: number; // in L/100km
-  fuelType: 'ron95' | 'ron92' | 'diesel';
+  consumption: number; // in L/100km for gas, or kWh/100km for electric
+  fuelType: 'ron95' | 'ron92' | 'diesel' | 'electricFast' | 'electricHome';
   source: string;
   aliases: string[];
 }
@@ -1205,33 +1205,187 @@ export const VEHICLE_SPECS_DB: VehicleSpecEntry[] = [
   },
 
   // ==========================================
-  // VINFAST (XĂNG)
+  // XE ĐIỆN VINFAST (CỤC ĐĂNG KIỂM & VINFAST)
   // ==========================================
   {
-    modelName: 'VinFast Fadil 1.4',
+    modelName: 'VinFast VF 3',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin 18.64 kWh • 43 HP • Đi ~210 km (NEDC)',
+    consumption: 8.30,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam & VinFast',
+    aliases: ['vf 3', 'vf3', 'vinfast vf 3', 'vinfast vf3'],
+  },
+  {
+    modelName: 'VinFast VF 5 Plus',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin 37.23 kWh • 134 HP • Đi ~326 km (NEDC)',
+    consumption: 11.50,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['vf 5', 'vf5', 'vf5 plus', 'vinfast vf 5', 'vinfast vf5'],
+  },
+  {
+    modelName: 'VinFast VF e34',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin 42 kWh • 147 HP • Đi ~318 km',
+    consumption: 13.10,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['vf e34', 'vfe34', 'e34', 'vinfast e34'],
+  },
+  {
+    modelName: 'VinFast VF 6',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin 59.6 kWh • 201 HP • Đi ~399 km (WLTP)',
+    consumption: 14.00,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['vf 6', 'vf6', 'vinfast vf 6', 'vinfast vf6'],
+  },
+  {
+    modelName: 'VinFast VF 7',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin 75.3 kWh • 349 HP AWD • Đi ~431 km',
+    consumption: 16.50,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['vf 7', 'vf7', 'vinfast vf 7', 'vinfast vf7'],
+  },
+  {
+    modelName: 'VinFast VF 8',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin 87.7 kWh • 402 HP AWD • Đi ~471 km',
+    consumption: 18.50,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam & US EPA',
+    aliases: ['vf 8', 'vf8', 'vinfast vf 8', 'vinfast vf8'],
+  },
+  {
+    modelName: 'VinFast VF 9',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin 123 kWh • 402 HP AWD 7 chỗ • Đi ~602 km',
+    consumption: 21.00,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam & US EPA',
+    aliases: ['vf 9', 'vf9', 'vinfast vf 9', 'vinfast vf9'],
+  },
+  {
+    modelName: 'VinFast Evo 200',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin LFP 3.5 kWh • Động cơ Inhub 2.500W • Đi ~203 km',
+    consumption: 1.80,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['evo 200', 'evo', 'vinfast evo', 'evo200'],
+  },
+  {
+    modelName: 'VinFast Feliz S',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin LFP 3.5 kWh • 3.000W • Đi ~198 km',
+    consumption: 2.10,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['feliz s', 'feliz', 'vinfast feliz'],
+  },
+  {
+    modelName: 'VinFast Klara S',
+    brand: 'VinFast',
+    type: 'electric',
+    engine: 'Pin LFP 3.5 kWh • 3.000W • Đi ~194 km',
+    consumption: 2.20,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['klara s', 'klara', 'vinfast klara'],
+  },
+  {
+    modelName: 'Dat Bike Quantum',
+    brand: 'Dat Bike',
+    type: 'electric',
+    engine: 'Pin 7.2 kWh • 7.000W • Đi ~270 km',
+    consumption: 2.60,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam',
+    aliases: ['quantum', 'dat bike', 'datbike', 'dat bike quantum'],
+  },
+  {
+    modelName: 'Tesla Model 3 Long Range',
+    brand: 'Tesla',
+    type: 'electric',
+    engine: 'Pin 75 kWh Dual Motor AWD • ~341 mi',
+    consumption: 14.80,
+    fuelType: 'electricFast',
+    source: 'U.S. EPA (Environmental Protection Agency)',
+    aliases: ['model 3', 'tesla model 3', 'tesla 3'],
+  },
+  {
+    modelName: 'Tesla Model Y Long Range',
+    brand: 'Tesla',
+    type: 'electric',
+    engine: 'Pin 75 kWh Dual Motor AWD • ~310 mi',
+    consumption: 16.80,
+    fuelType: 'electricFast',
+    source: 'U.S. EPA (Environmental Protection Agency)',
+    aliases: ['model y', 'tesla model y', 'tesla y'],
+  },
+  {
+    modelName: 'Tesla Cybertruck AWD',
+    brand: 'Tesla',
+    type: 'electric',
+    engine: 'Pin 123 kWh Tri-Motor AWD • ~340 mi',
+    consumption: 26.50,
+    fuelType: 'electricFast',
+    source: 'U.S. EPA',
+    aliases: ['cybertruck', 'tesla cybertruck'],
+  },
+  {
+    modelName: 'BYD Atto 3',
+    brand: 'BYD',
+    type: 'electric',
+    engine: 'Pin Blade 60.5 kWh • 201 HP • Đi ~410 km',
+    consumption: 15.60,
+    fuelType: 'electricFast',
+    source: 'Cục Đăng kiểm Việt Nam & WLTP',
+    aliases: ['atto 3', 'byd atto 3', 'atto'],
+  },
+
+  // ==========================================
+  // VINFAST (DÒNG XĂNG CŨ - ĐÃ DỪNG SX)
+  // ==========================================
+  {
+    modelName: 'VinFast Fadil 1.4 [Xăng Cũ]',
     brand: 'VinFast',
     type: 'car',
-    engine: '1.4L 4 xi-lanh CVT',
+    engine: '1.4L 4 xi-lanh CVT (Đã dừng SX)',
     consumption: 5.85,
     fuelType: 'ron95',
     source: 'Cục Đăng kiểm Việt Nam',
     aliases: ['fadil', 'vinfast fadil'],
   },
   {
-    modelName: 'VinFast Lux A2.0',
+    modelName: 'VinFast Lux A2.0 [Xăng Cũ]',
     brand: 'VinFast',
     type: 'car',
-    engine: '2.0L Turbo N20 BMW phát triển',
+    engine: '2.0L Turbo N20 BMW (Đã dừng SX)',
     consumption: 8.30,
     fuelType: 'ron95',
     source: 'Cục Đăng kiểm Việt Nam',
     aliases: ['lux a', 'lux a2.0', 'vinfast lux a'],
   },
   {
-    modelName: 'VinFast Lux SA2.0',
+    modelName: 'VinFast Lux SA2.0 [Xăng Cũ]',
     brand: 'VinFast',
     type: 'car',
-    engine: '2.0L Turbo 228 HP ZF 8 cấp',
+    engine: '2.0L Turbo 228 HP ZF (Đã dừng SX)',
     consumption: 10.40,
     fuelType: 'ron95',
     source: 'Cục Đăng kiểm Việt Nam',
@@ -1354,7 +1508,7 @@ export type LookupResult =
 export function lookupVehicleSpec(
   vehicleName: string,
   brandHint?: string,
-  preferredType?: 'motorcycle' | 'car'
+  preferredType?: 'motorcycle' | 'car' | 'electric'
 ): LookupResult {
   const cleanName = vehicleName.trim().toLowerCase();
   const cleanBrand = (brandHint || '').trim().toLowerCase();
@@ -1368,11 +1522,71 @@ export function lookupVehicleSpec(
   const rawNumbers = cleanName.match(/\d+(\.\d+)?/g) || [];
   const numbersInInput = rawNumbers.map((n) => n.toLowerCase());
 
+  // Lập danh sách tất cả thương hiệu đã biết trong DB
+  const allBrands = Array.from(new Set(VEHICLE_SPECS_DB.map((e) => e.brand.toLowerCase())));
+
+  // Helper kiểm tra brand có tương thích không
+  const isBrandCompatible = (entryBrand: string) => {
+    if (!cleanBrand) return true;
+    const eb = entryBrand.toLowerCase();
+    return eb === cleanBrand || eb.includes(cleanBrand) || cleanBrand.includes(eb);
+  };
+
+  // Helper kiểm tra type có tương thích không
+  const isTypeCompatible = (entryType: string) => {
+    if (!preferredType) return true;
+    return entryType === preferredType;
+  };
+
+  // TRƯỜNG HỢP A: Người dùng chỉ nhập Tên Hãng (Brand alone, ví dụ "Ducati", "Honda", "Toyota", "Yamaha", "VinFast", "Tesla")
+  // Một hãng xe có rất nhiều mẫu khác nhau nên không thể gán một mức tiêu hao duy nhất!
+  const matchedBrand = allBrands.find(
+    (b) => b === cleanName || cleanName === b.replace(/\s+/g, '')
+  );
+
+  if (matchedBrand) {
+    // Nếu có brandHint và brandHint khác với cleanName -> mâu thuẫn (VD: Model = Ducati, Brand = Toyota)
+    if (cleanBrand && !cleanBrand.includes(matchedBrand) && !matchedBrand.includes(cleanBrand)) {
+      return { status: 'not_found' };
+    }
+
+    // Lọc các xe thuộc hãng này (và ưu tiên theo preferredType nếu có)
+    const brandVehicles = VEHICLE_SPECS_DB.filter(
+      (e) => e.brand.toLowerCase() === matchedBrand && isTypeCompatible(e.type)
+    );
+
+    if (brandVehicles.length > 0) {
+      return {
+        status: 'variant_mismatch',
+        baseModel: brandVehicles[0].brand,
+        suggestions: brandVehicles.slice(0, 4),
+      };
+    }
+  }
+
+  // TRƯỜNG HỢP B: Nếu người dùng nhập tên xe có chứa tên hãng nhưng hãng đó xung đột với brandHint
+  // Ví dụ: Nhập "Ducati Monster" nhưng brandHint lại chọn "Toyota"
+  if (cleanBrand) {
+    const conflictingBrand = allBrands.find(
+      (b) => b !== cleanBrand && !cleanBrand.includes(b) && !b.includes(cleanBrand) && cleanName.includes(b)
+    );
+    if (conflictingBrand) {
+      // Nhập tên xe của hãng khác hoàn toàn với Hãng sản xuất đã chọn
+      return { status: 'not_found' };
+    }
+  }
+
   // 1. TÌM KHỚP CHÍNH XÁC (EXACT MATCH)
   // Nếu người dùng nhập tên khớp tên xe hoặc alias, VÀ mọi số hiệu người dùng gõ đều phải có trong xe đó
   for (const entry of VEHICLE_SPECS_DB) {
+    if (!isTypeCompatible(entry.type)) continue;
+    if (!isBrandCompatible(entry.brand)) continue;
+
     const modelLower = entry.modelName.toLowerCase();
     const entryText = `${modelLower} ${entry.engine.toLowerCase()} ${entry.aliases.join(' ')}`;
+
+    // Không cho phép exact_found nếu cleanName chỉ là tên hãng đơn thuần
+    if (cleanName === entry.brand.toLowerCase()) continue;
 
     // Kiểm tra xem cleanName có khớp tên model hoặc alias nào không
     const isNameMatch =
@@ -1397,6 +1611,9 @@ export function lookupVehicleSpec(
   let candidateScore = 0;
 
   for (const entry of VEHICLE_SPECS_DB) {
+    if (!isTypeCompatible(entry.type)) continue;
+    if (!isBrandCompatible(entry.brand)) continue;
+
     const modelLower = entry.modelName.toLowerCase();
     const brandLower = entry.brand.toLowerCase();
     const entryFullText = `${modelLower} ${brandLower} ${entry.engine.toLowerCase()} ${entry.aliases.join(' ')}`;
@@ -1414,6 +1631,7 @@ export function lookupVehicleSpec(
         let score = 80;
         if (cleanBrand && brandLower.includes(cleanBrand)) score += 20;
         if (preferredType && entry.type === preferredType) score += 10;
+        score += inputWords.length * 2;
         if (score > candidateScore) {
           candidateScore = score;
           bestCandidate = entry;
@@ -1428,11 +1646,13 @@ export function lookupVehicleSpec(
 
   // 3. KIỂM TRA LỆCH PHIÊN BẢN (VARIANT MISMATCH)
   // Ví dụ người dùng gõ "Innova 999.0", "Wave 9999", "Vios 100"...
-  // Tên cơ sở "Innova" hoặc "Wave" có thật, nhưng số 999.0 không tồn tại ở bất kỳ bản nào
   const relatedVariants: VehicleSpecEntry[] = [];
   let detectedBaseModel = '';
 
   for (const entry of VEHICLE_SPECS_DB) {
+    if (!isTypeCompatible(entry.type)) continue;
+    if (!isBrandCompatible(entry.brand)) continue;
+
     for (const a of entry.aliases) {
       // Nếu alias xuất hiện như 1 từ độc lập trong input (ví dụ 'innova', 'wave', 'vios', 'camry')
       const regex = new RegExp(`\\b${a}\\b`, 'i');

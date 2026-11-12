@@ -1,6 +1,6 @@
 import type { CountryFuelData } from '../types';
 
-export const COUNTRIES: CountryFuelData[] = [
+const BASE_COUNTRIES: CountryFuelData[] = [
   // 1. VIỆT NAM (Cập nhật chuẩn kỳ điều hành 12/11/2026 theo ảnh thực tế)
   {
     code: 'VN',
@@ -725,3 +725,192 @@ export const COUNTRIES: CountryFuelData[] = [
     },
   },
 ];
+
+const EV_RATES: Record<
+  string,
+  { fastName: string; fastPrice: number; homeName: string; homePrice: number; unitLabel: string }
+> = {
+  VN: {
+    fastName: 'Trạm sạc V-GREEN (VinFast)',
+    fastPrice: 3858,
+    homeName: 'Sạc tại nhà (EVN)',
+    homePrice: 2600,
+    unitLabel: '₫/kWh',
+  },
+  US: {
+    fastName: 'Public Fast Charger (Tesla / EA)',
+    fastPrice: 0.42,
+    homeName: 'Home Charging (US EIA)',
+    homePrice: 0.17,
+    unitLabel: '$/kWh',
+  },
+  TH: {
+    fastName: 'Trạm sạc PEA / PTT EV Station',
+    fastPrice: 7.50,
+    homeName: 'Sạc tại nhà (MEA/PEA)',
+    homePrice: 4.50,
+    unitLabel: '฿/kWh',
+  },
+  JP: {
+    fastName: 'e-MP 急速充電スタンド',
+    fastPrice: 45,
+    homeName: '自宅充電 (東京電力基準)',
+    homePrice: 29,
+    unitLabel: '¥/kWh',
+  },
+  DE: {
+    fastName: 'Ionity / EnBW Schnellladen',
+    fastPrice: 0.55,
+    homeName: 'Haushaltsstrom (Home)',
+    homePrice: 0.34,
+    unitLabel: '€/kWh',
+  },
+  FR: {
+    fastName: 'Recharge Rapide Publique',
+    fastPrice: 0.52,
+    homeName: 'Électricité Domicile (EDF)',
+    homePrice: 0.25,
+    unitLabel: '€/kWh',
+  },
+  GB: {
+    fastName: 'Public Rapid Charging',
+    fastPrice: 0.65,
+    homeName: 'Home Electricity (Ofgem)',
+    homePrice: 0.28,
+    unitLabel: '£/kWh',
+  },
+  KR: {
+    fastName: '공공 급속충전 (E-pit / Kepco)',
+    fastPrice: 347,
+    homeName: '가정용 충전 (한전)',
+    homePrice: 215,
+    unitLabel: '₩/kWh',
+  },
+  CN: {
+    fastName: '公共快充桩 (特来电/星星充电)',
+    fastPrice: 1.45,
+    homeName: '家用电网充电',
+    homePrice: 0.58,
+    unitLabel: '¥/kWh',
+  },
+  SG: {
+    fastName: 'SP Group Fast Charger',
+    fastPrice: 0.65,
+    homeName: 'Home Electricity (SP)',
+    homePrice: 0.32,
+    unitLabel: 'S$/kWh',
+  },
+  ID: {
+    fastName: 'SPKLU PLN Fast Charging',
+    fastPrice: 2466,
+    homeName: 'Listrik Rumah PLN',
+    homePrice: 1700,
+    unitLabel: 'Rp/kWh',
+  },
+  MY: {
+    fastName: 'Gentari / ChargEV Fast',
+    fastPrice: 1.40,
+    homeName: 'Home Electricity (TNB)',
+    homePrice: 0.57,
+    unitLabel: 'RM/kWh',
+  },
+  PH: {
+    fastName: 'Shell Recharge Fast',
+    fastPrice: 28.0,
+    homeName: 'Home Electricity (Meralco)',
+    homePrice: 12.5,
+    unitLabel: '₱/kWh',
+  },
+  IN: {
+    fastName: 'Tata Power EZ Charge',
+    fastPrice: 19.0,
+    homeName: 'Home Electricity',
+    homePrice: 8.0,
+    unitLabel: '₹/kWh',
+  },
+  AU: {
+    fastName: 'Chargefox / Evie Fast',
+    fastPrice: 0.60,
+    homeName: 'Home Electricity',
+    homePrice: 0.28,
+    unitLabel: 'A$/kWh',
+  },
+  CA: {
+    fastName: 'Petro-Canada Fast Charge',
+    fastPrice: 0.45,
+    homeName: 'Home Hydro Electricity',
+    homePrice: 0.15,
+    unitLabel: 'C$/kWh',
+  },
+  IT: {
+    fastName: 'Enel X Way Ricarica Rapida',
+    fastPrice: 0.60,
+    homeName: 'Elettricità Casa',
+    homePrice: 0.30,
+    unitLabel: '€/kWh',
+  },
+  ES: {
+    fastName: 'Iberdrola Carga Rápida',
+    fastPrice: 0.48,
+    homeName: 'Electricidad Hogar',
+    homePrice: 0.22,
+    unitLabel: '€/kWh',
+  },
+  NL: {
+    fastName: 'Fastned Snellaadstation',
+    fastPrice: 0.69,
+    homeName: 'Thuisstroom',
+    homePrice: 0.32,
+    unitLabel: '€/kWh',
+  },
+  CH: {
+    fastName: 'GOFAST Schnellladen',
+    fastPrice: 0.59,
+    homeName: 'Haushaltsstrom',
+    homePrice: 0.28,
+    unitLabel: 'CHF/kWh',
+  },
+  BR: {
+    fastName: 'Shell Recharge Rápida',
+    fastPrice: 2.10,
+    homeName: 'Energia Residencial',
+    homePrice: 0.85,
+    unitLabel: 'R$/kWh',
+  },
+  MX: {
+    fastName: 'Evergo Carga Rápida',
+    fastPrice: 7.50,
+    homeName: 'CFE Hogar',
+    homePrice: 3.20,
+    unitLabel: 'MX$/kWh',
+  },
+};
+
+export const COUNTRIES: CountryFuelData[] = BASE_COUNTRIES.map((c) => {
+  const ev = EV_RATES[c.code] || {
+    fastName: 'Public Fast Charging',
+    fastPrice: Number((c.fuels.ron95.pricePerUnit * 0.4).toFixed(2)),
+    homeName: 'Home Charging',
+    homePrice: Number((c.fuels.ron95.pricePerUnit * 0.18).toFixed(2)),
+    unitLabel: `${c.currencySymbol}/kWh`,
+  };
+
+  return {
+    ...c,
+    fuels: {
+      ...c.fuels,
+      electricFast: {
+        id: 'electricFast',
+        name: ev.fastName,
+        pricePerUnit: ev.fastPrice,
+        unitLabel: ev.unitLabel,
+      },
+      electricHome: {
+        id: 'electricHome',
+        name: ev.homeName,
+        pricePerUnit: ev.homePrice,
+        unitLabel: ev.unitLabel,
+      },
+    },
+  };
+});

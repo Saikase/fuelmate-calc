@@ -1,12 +1,12 @@
 import React from 'react';
-import type { Vehicle, CountryFuelData } from '../types';
+import type { Vehicle, CountryFuelData, FuelKey } from '../types';
 import { getTranslation } from '../i18n/translations';
 
 interface RouteAndFuelStepProps {
   selectedVehicle: Vehicle;
   selectedCountry: CountryFuelData;
-  selectedFuelType: 'ron95' | 'ron92' | 'diesel';
-  onSelectFuelType: (t: 'ron95' | 'ron92' | 'diesel') => void;
+  selectedFuelType: FuelKey;
+  onSelectFuelType: (t: FuelKey) => void;
   customFuelPrice: number | null;
   onOpenEditPriceModal: () => void;
   distance: number;
@@ -74,7 +74,12 @@ export const RouteAndFuelStep: React.FC<RouteAndFuelStepProps> = ({
         <div>
           <div className="text-[10px] text-slate-400">{t('selectedVehicleLabel')}</div>
           <div className="font-extrabold text-xs text-amber-500 mt-0.5">
-            {selectedVehicle.name} ({selectedVehicle.fuelConsumption} L/100km)
+            {selectedVehicle.name} ({selectedVehicle.fuelConsumption}{' '}
+            {selectedVehicle.type === 'electric'
+              ? 'kWh/100km'
+              : selectedCountry.unitSystem === 'imperial'
+              ? 'MPG'
+              : 'L/100km'})
           </div>
         </div>
 
@@ -86,79 +91,162 @@ export const RouteAndFuelStep: React.FC<RouteAndFuelStepProps> = ({
         </button>
       </div>
 
-      {/* Fuel Type Selection */}
+      {/* Fuel Type / EV Charging Source Selection */}
       <div className="mb-4">
-        <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
-          {t('fuelPriceLabel')}
-        </label>
+        {selectedVehicle.type === 'electric' ? (
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-emerald-500 block mb-1.5 flex items-center gap-1">
+              <span>⚡</span>
+              <span>{t('evChargingSourceLabel')}</span>
+            </label>
 
-        <div className="grid grid-cols-3 gap-2 mb-2">
-          {/* Fuel 1: High Octane / Premium / RON 95 */}
-          <button
-            type="button"
-            onClick={() => onSelectFuelType('ron95')}
-            className={`py-2 px-1.5 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[58px] ${
-              selectedFuelType === 'ron95'
-                ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold shadow-xs'
-                : isDark
-                ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
-                : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
-            }`}
-          >
-            <div className="font-bold text-[11px] leading-tight line-clamp-2" title={selectedCountry.fuels.ron95.name}>
-              {selectedCountry.fuels.ron95.name}
-            </div>
-            <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
-              {selectedCountry.fuels.ron95.pricePerUnit.toLocaleString()} {selectedCountry.fuels.ron95.unitLabel}
-            </div>
-          </button>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              {/* EV Option 1: Public Fast Charger */}
+              {selectedCountry.fuels.electricFast && (
+                <button
+                  type="button"
+                  onClick={() => onSelectFuelType('electricFast')}
+                  className={`py-2 px-2 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[60px] ${
+                    selectedFuelType === 'electricFast'
+                      ? 'bg-emerald-500 text-slate-950 border-emerald-500 font-bold shadow-xs'
+                      : isDark
+                      ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
+                      : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    <span>⚡</span>
+                    <span
+                      className="font-bold text-[11px] leading-tight line-clamp-2"
+                      title={selectedCountry.fuels.electricFast.name}
+                    >
+                      {selectedCountry.fuels.electricFast.name}
+                    </span>
+                  </div>
+                  <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
+                    {selectedCountry.fuels.electricFast.pricePerUnit.toLocaleString()}{' '}
+                    {selectedCountry.fuels.electricFast.unitLabel}
+                  </div>
+                </button>
+              )}
 
-          {/* Fuel 2: Regular / E5 / RON 92 */}
-          {selectedCountry.fuels.ron92 ? (
-            <button
-              type="button"
-              onClick={() => onSelectFuelType('ron92')}
-              className={`py-2 px-1.5 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[58px] ${
-                selectedFuelType === 'ron92'
-                  ? 'bg-emerald-500 text-slate-950 border-emerald-500 font-bold shadow-xs'
-                  : isDark
-                  ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
-                  : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
-              }`}
-            >
-              <div className="font-bold text-[11px] leading-tight line-clamp-2" title={selectedCountry.fuels.ron92.name}>
-                {selectedCountry.fuels.ron92.name}
-              </div>
-              <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
-                {selectedCountry.fuels.ron92.pricePerUnit.toLocaleString()} {selectedCountry.fuels.ron92.unitLabel}
-              </div>
-            </button>
-          ) : (
-            <div className="py-2 px-1.5 rounded-xl text-xs text-slate-400 border border-dashed border-slate-300 dark:border-slate-800 flex items-center justify-center text-center">
-              —
+              {/* EV Option 2: Home Charging */}
+              {selectedCountry.fuels.electricHome && (
+                <button
+                  type="button"
+                  onClick={() => onSelectFuelType('electricHome')}
+                  className={`py-2 px-2 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[60px] ${
+                    selectedFuelType === 'electricHome'
+                      ? 'bg-cyan-500 text-slate-950 border-cyan-500 font-bold shadow-xs'
+                      : isDark
+                      ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
+                      : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    <span>🏠</span>
+                    <span
+                      className="font-bold text-[11px] leading-tight line-clamp-2"
+                      title={selectedCountry.fuels.electricHome.name}
+                    >
+                      {selectedCountry.fuels.electricHome.name}
+                    </span>
+                  </div>
+                  <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
+                    {selectedCountry.fuels.electricHome.pricePerUnit.toLocaleString()}{' '}
+                    {selectedCountry.fuels.electricHome.unitLabel}
+                  </div>
+                </button>
+              )}
             </div>
-          )}
+          </div>
+        ) : (
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              {t('fuelPriceLabel')}
+            </label>
 
-          {/* Fuel 3: Diesel */}
-          <button
-            type="button"
-            onClick={() => onSelectFuelType('diesel')}
-            className={`py-2 px-1.5 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[58px] ${
-              selectedFuelType === 'diesel'
-                ? 'bg-blue-500 text-white border-blue-500 font-bold shadow-xs'
-                : isDark
-                ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
-                : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
-            }`}
-          >
-            <div className="font-bold text-[11px] leading-tight line-clamp-2" title={selectedCountry.fuels.diesel.name}>
-              {selectedCountry.fuels.diesel.name}
+            <div className="grid grid-cols-3 gap-2 mb-2">
+              {/* Fuel 1: High Octane / Premium / RON 95 */}
+              <button
+                type="button"
+                onClick={() => onSelectFuelType('ron95')}
+                className={`py-2 px-1.5 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[58px] ${
+                  selectedFuelType === 'ron95'
+                    ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold shadow-xs'
+                    : isDark
+                    ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
+                    : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
+                }`}
+              >
+                <div
+                  className="font-bold text-[11px] leading-tight line-clamp-2"
+                  title={selectedCountry.fuels.ron95.name}
+                >
+                  {selectedCountry.fuels.ron95.name}
+                </div>
+                <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
+                  {selectedCountry.fuels.ron95.pricePerUnit.toLocaleString()}{' '}
+                  {selectedCountry.fuels.ron95.unitLabel}
+                </div>
+              </button>
+
+              {/* Fuel 2: Regular / E5 / RON 92 */}
+              {selectedCountry.fuels.ron92 ? (
+                <button
+                  type="button"
+                  onClick={() => onSelectFuelType('ron92')}
+                  className={`py-2 px-1.5 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[58px] ${
+                    selectedFuelType === 'ron92'
+                      ? 'bg-emerald-500 text-slate-950 border-emerald-500 font-bold shadow-xs'
+                      : isDark
+                      ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
+                      : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
+                  }`}
+                >
+                  <div
+                    className="font-bold text-[11px] leading-tight line-clamp-2"
+                    title={selectedCountry.fuels.ron92.name}
+                  >
+                    {selectedCountry.fuels.ron92.name}
+                  </div>
+                  <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
+                    {selectedCountry.fuels.ron92.pricePerUnit.toLocaleString()}{' '}
+                    {selectedCountry.fuels.ron92.unitLabel}
+                  </div>
+                </button>
+              ) : (
+                <div className="py-2 px-1.5 rounded-xl text-xs text-slate-400 border border-dashed border-slate-300 dark:border-slate-800 flex items-center justify-center text-center">
+                  —
+                </div>
+              )}
+
+              {/* Fuel 3: Diesel */}
+              <button
+                type="button"
+                onClick={() => onSelectFuelType('diesel')}
+                className={`py-2 px-1.5 rounded-xl text-xs font-semibold transition text-center border cursor-pointer flex flex-col justify-between min-h-[58px] ${
+                  selectedFuelType === 'diesel'
+                    ? 'bg-blue-500 text-white border-blue-500 font-bold shadow-xs'
+                    : isDark
+                    ? 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
+                    : 'bg-slate-100 text-slate-700 border-slate-200 hover:text-slate-950'
+                }`}
+              >
+                <div
+                  className="font-bold text-[11px] leading-tight line-clamp-2"
+                  title={selectedCountry.fuels.diesel.name}
+                >
+                  {selectedCountry.fuels.diesel.name}
+                </div>
+                <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
+                  {selectedCountry.fuels.diesel.pricePerUnit.toLocaleString()}{' '}
+                  {selectedCountry.fuels.diesel.unitLabel}
+                </div>
+              </button>
             </div>
-            <div className="text-[10px] opacity-90 mt-1 font-mono font-black">
-              {selectedCountry.fuels.diesel.pricePerUnit.toLocaleString()} {selectedCountry.fuels.diesel.unitLabel}
-            </div>
-          </button>
-        </div>
+          </div>
+        )}
 
         {/* Applied price box & Edit button */}
         <div

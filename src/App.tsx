@@ -12,7 +12,7 @@ import { SavedTripsModal } from './components/SavedTripsModal';
 import { TermsPrivacyModal } from './components/TermsPrivacyModal';
 import { COUNTRIES } from './data/countries';
 import { VEHICLES } from './data/vehicles';
-import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip, MonthlyFuelExpense } from './types';
+import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip, MonthlyFuelExpense, FuelKey } from './types';
 import { getTranslation } from './i18n/translations';
 import { initializeAdMob } from './services/admob';
 import { archiveOldTrips } from './utils/tripArchive';
@@ -91,6 +91,7 @@ export function App() {
         ...selectedCountry,
         lastUpdated: remote.lastUpdated ? `${remote.lastUpdated} (${remote.source || 'Online'})` : selectedCountry.lastUpdated,
         fuels: {
+          ...selectedCountry.fuels,
           ron95: {
             ...selectedCountry.fuels.ron95,
             pricePerUnit: remote.fuels?.ron95?.price ?? selectedCountry.fuels.ron95.pricePerUnit,
@@ -105,6 +106,8 @@ export function App() {
             ...selectedCountry.fuels.diesel,
             pricePerUnit: remote.fuels?.diesel?.price ?? selectedCountry.fuels.diesel.pricePerUnit,
           },
+          electricFast: selectedCountry.fuels.electricFast,
+          electricHome: selectedCountry.fuels.electricHome,
         },
       };
     }
@@ -128,7 +131,7 @@ export function App() {
   const [conditionFactor, setConditionFactor] = useState<number>(1.0);
 
   // Route & Fuel
-  const [selectedFuelType, setSelectedFuelType] = useState<'ron95' | 'ron92' | 'diesel'>('ron95');
+  const [selectedFuelType, setSelectedFuelType] = useState<FuelKey>('ron95');
   const [customFuelPrice, setCustomFuelPrice] = useState<number | null>(null);
   const [distance, setDistance] = useState<number>(15);
   const [isRoundTrip, setIsRoundTrip] = useState<boolean>(false);
@@ -206,7 +209,9 @@ export function App() {
 
   // Synchronize fuel type when vehicle changes
   useEffect(() => {
-    if (selectedVehicle.recommendedFuel === 'diesel') {
+    if (selectedVehicle.type === 'electric') {
+      setSelectedFuelType(selectedVehicle.recommendedFuel || 'electricFast');
+    } else if (selectedVehicle.recommendedFuel === 'diesel') {
       setSelectedFuelType('diesel');
     } else if (selectedVehicle.recommendedFuel === 'ron92' && selectedCountry.fuels.ron92) {
       setSelectedFuelType('ron92');
@@ -234,12 +239,18 @@ export function App() {
   const calculationResult: CalculationResult = useMemo(() => {
     const actualDist = distance * (isRoundTrip ? 2 : 1);
     const effectiveConsumption = selectedVehicle.fuelConsumption * conditionFactor;
+    const isElectric = selectedVehicle.type === 'electric';
     
     let fuelNeeded = 0;
-    const activeFuel = activeCountry.fuels[selectedFuelType] || activeCountry.fuels.ron95;
+    const activeFuel =
+      activeCountry.fuels[selectedFuelType] ||
+      (isElectric ? activeCountry.fuels.electricFast : null) ||
+      activeCountry.fuels.ron95;
     const fuelPrice = customFuelPrice !== null ? customFuelPrice : activeFuel.pricePerUnit;
 
-    if (isImperial) {
+    if (isElectric) {
+      fuelNeeded = (actualDist / 100) * effectiveConsumption; // kWh
+    } else if (isImperial) {
       const effectiveMpg = 235.215 / effectiveConsumption;
       fuelNeeded = actualDist / effectiveMpg; // in Gallons
     } else {
@@ -263,7 +274,8 @@ export function App() {
       currency: activeCountry.currency,
       currencySymbol: activeCountry.currencySymbol,
       distanceUnit: isImperial ? 'mi' : 'km',
-      volumeUnit: isImperial ? 'gal' : 'L',
+      volumeUnit: isElectric ? 'kWh' : (isImperial ? 'gal' : 'L'),
+      isElectric,
     };
   }, [
     distance,

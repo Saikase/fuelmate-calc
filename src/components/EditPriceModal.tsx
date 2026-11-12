@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import type { CountryFuelData } from '../types';
+import type { CountryFuelData, FuelKey } from '../types';
 import { getTranslation } from '../i18n/translations';
 
 interface EditPriceModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedCountry: CountryFuelData;
-  fuelType: 'ron95' | 'ron92' | 'diesel';
+  fuelType: FuelKey;
   customPrice: number | null;
   onSavePrice: (newPrice: number | null) => void;
   isDark: boolean;
@@ -48,6 +48,8 @@ export const EditPriceModal: React.FC<EditPriceModalProps> = ({
     onClose();
   };
 
+  const isElectric = fuelType === 'electricFast' || fuelType === 'electricHome';
+
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
       <div
@@ -58,7 +60,9 @@ export const EditPriceModal: React.FC<EditPriceModalProps> = ({
         }`}
       >
         <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-          <h3 className="font-bold text-sm">{t('editPriceModalTitle')}</h3>
+          <h3 className="font-bold text-sm">
+            {isElectric ? t('editEvTariffModalTitle') : t('editPriceModalTitle')}
+          </h3>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 cursor-pointer"
