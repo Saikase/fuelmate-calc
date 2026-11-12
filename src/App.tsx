@@ -9,11 +9,11 @@ import { CountrySelectModal } from './components/CountrySelectModal';
 import { CustomVehicleModal } from './components/CustomVehicleModal';
 import { EditPriceModal } from './components/EditPriceModal';
 import { SavedTripsModal } from './components/SavedTripsModal';
-import { AdmobGuideModal } from './components/AdmobGuideModal';
 import { COUNTRIES } from './data/countries';
 import { VEHICLES } from './data/vehicles';
 import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip } from './types';
 import { getTranslation } from './i18n/translations';
+import { initializeAdMob } from './services/admob';
 
 export function App() {
   // Theme state: dark / light
@@ -47,8 +47,9 @@ export function App() {
   const [isCountryModalOpen, setIsCountryModalOpen] = useState(false);
   const [livePrices, setLivePrices] = useState<Record<string, any> | null>(null);
 
-  // Fetch updated prices from automated JSON feed
+  // Fetch updated prices from automated JSON feed & Init AdMob
   useEffect(() => {
+    initializeAdMob();
     fetch('./fuel_prices.json')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -116,7 +117,6 @@ export function App() {
   const [isCustomVehicleOpen, setIsCustomVehicleOpen] = useState(false);
   const [isEditPriceOpen, setIsEditPriceOpen] = useState(false);
   const [isSavedTripsOpen, setIsSavedTripsOpen] = useState(false);
-  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   // Saved trips
   const [savedTrips, setSavedTrips] = useState<SavedTrip[]>(() => {
@@ -358,20 +358,20 @@ export function App() {
 
           {/* STEP 3: KẾT QUẢ CHI PHÍ */}
           {currentStep === 3 && (
-            <>
-              <ResultStep
-                result={calculationResult}
-                selectedCountry={activeCountry}
-                onSaveTrip={handleSaveTrip}
-                onNewTrip={() => setCurrentStep(1)}
-                isDark={isDark}
-              />
-
-              {/* AdMob Adaptive Banner Simulation */}
-              <AdMobBanner isDark={isDark} language={activeCountry.language} />
-            </>
+            <ResultStep
+              result={calculationResult}
+              selectedCountry={activeCountry}
+              onSaveTrip={handleSaveTrip}
+              onNewTrip={() => setCurrentStep(1)}
+              isDark={isDark}
+            />
           )}
         </main>
+
+        {/* Persistent AdMob Adaptive Banner */}
+        <div className="px-3 pb-2">
+          <AdMobBanner isDark={isDark} language={activeCountry.language} />
+        </div>
 
         {/* Footer info bar */}
         <footer
@@ -381,13 +381,8 @@ export function App() {
               : 'bg-white border-slate-200 text-slate-500'
           }`}
         >
-          <span>FuelMate • Multi-Country</span>
-          <button
-            onClick={() => setIsGuideOpen(true)}
-            className="text-amber-500 hover:underline font-semibold cursor-pointer"
-          >
-            {t('storeGuideLabel')} &gt;
-          </button>
+          <span>FuelMate v1.0</span>
+          <span>{activeCountry.name} • {activeCountry.currency}</span>
         </footer>
       </div>
 
@@ -402,7 +397,6 @@ export function App() {
         savedTripsCount={savedTrips.length}
         isDark={isDark}
         onToggleTheme={toggleTheme}
-        onOpenGuide={() => setIsGuideOpen(true)}
       />
 
       {/* Country Select Modal */}
@@ -442,13 +436,6 @@ export function App() {
         onDeleteTrip={handleDeleteTrip}
         onClearAll={handleClearAllTrips}
         selectedCountry={activeCountry}
-        isDark={isDark}
-      />
-
-      {/* AdMob Store Guide */}
-      <AdmobGuideModal
-        isOpen={isGuideOpen}
-        onClose={() => setIsGuideOpen(false)}
         isDark={isDark}
       />
     </div>

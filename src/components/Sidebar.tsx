@@ -12,7 +12,6 @@ interface SidebarProps {
   savedTripsCount: number;
   isDark: boolean;
   onToggleTheme: () => void;
-  onOpenGuide: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -25,7 +24,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   savedTripsCount,
   isDark,
   onToggleTheme,
-  onOpenGuide,
 }) => {
   if (!isOpen) return null;
 
@@ -125,16 +123,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
 
-          {/* Admob Dev guide */}
-          <button
-            onClick={() => {
-              onClose();
-              onOpenGuide();
-            }}
-            className="w-full py-2 px-3 text-left rounded-xl text-xs font-semibold text-indigo-500 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition cursor-pointer"
-          >
-            {t('storeGuideLabel')}
-          </button>
+          {/* App Version Info */}
+          <div className="pt-2 text-center text-[10px] text-slate-400 font-mono">
+            FuelMate v1.0
+          </div>
         </div>
       </div>
 

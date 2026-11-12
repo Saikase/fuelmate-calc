@@ -80,7 +80,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'Giao diện',
     darkTheme: 'Tối',
     lightTheme: 'Sáng',
-    storeGuideLabel: 'Hướng dẫn xuất bản Store',
     menuTitle: 'Menu & Cài đặt',
   },
   en: {
@@ -162,7 +161,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'Appearance',
     darkTheme: 'Dark',
     lightTheme: 'Light',
-    storeGuideLabel: 'Store Publishing Guide',
     menuTitle: 'Menu & Settings',
   },
   ja: {
@@ -241,7 +239,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'テーマ',
     darkTheme: 'ダーク',
     lightTheme: 'ライト',
-    storeGuideLabel: '配信ガイド',
     menuTitle: 'メニュー',
   },
   ko: {
@@ -320,7 +317,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: '테마',
     darkTheme: '다크',
     lightTheme: '라이트',
-    storeGuideLabel: '출시 가이드',
     menuTitle: '메뉴',
   },
   th: {
@@ -399,7 +395,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'ธีม',
     darkTheme: 'มืด',
     lightTheme: 'สว่าง',
-    storeGuideLabel: 'คู่มือ AdMob',
     menuTitle: 'เมนู',
   },
   de: {
@@ -478,7 +473,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'Design',
     darkTheme: 'Dunkel',
     lightTheme: 'Hell',
-    storeGuideLabel: 'Store-Leitfaden',
     menuTitle: 'Menü',
   },
   fr: {
@@ -557,7 +551,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'Thème',
     darkTheme: 'Sombre',
     lightTheme: 'Clair',
-    storeGuideLabel: 'Guide Store',
     menuTitle: 'Menu',
   },
   es: {
@@ -636,7 +629,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'Tema',
     darkTheme: 'Oscuro',
     lightTheme: 'Claro',
-    storeGuideLabel: 'Guía de publicación',
     menuTitle: 'Menú',
   },
   zh: {
@@ -715,7 +707,6 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: '外观模式',
     darkTheme: '深色',
     lightTheme: '浅色',
-    storeGuideLabel: '上架发布指南',
     menuTitle: '菜单',
   },
 };

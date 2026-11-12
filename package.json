@@ -1,7 +1,7 @@
 {
   "name": "admob-ki-m-c-m",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^7.2.0",
     "@capacitor/android": "^8.6.0",
     "@capacitor/cli": "^8.6.0",
     "@capacitor/core": "^8.6.0",
