@@ -50,7 +50,11 @@ export function App() {
 
   // Fetch updated prices from automated JSON feed & Init AdMob
   useEffect(() => {
-    initializeAdMob();
+    // Delay native AdMob initialization slightly to let Android view hierarchy fully attach
+    const timer = setTimeout(() => {
+      initializeAdMob().catch((err) => console.warn('[AdMob] Init deferred error:', err));
+    }, 1500);
+
     fetch('./fuel_prices.json')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -61,6 +65,8 @@ export function App() {
       .catch(() => {
         // Offline bundled fallback
       });
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Merge live dynamic prices with selected country
