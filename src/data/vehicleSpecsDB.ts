@@ -1331,84 +1331,132 @@ export const VEHICLE_SPECS_DB: VehicleSpecEntry[] = [
   },
 ];
 
+export type LookupResult =
+  | {
+      status: 'exact_found';
+      entry: VehicleSpecEntry;
+    }
+  | {
+      status: 'variant_mismatch';
+      baseModel: string;
+      suggestions: VehicleSpecEntry[];
+    }
+  | {
+      status: 'not_found';
+    };
+
 /**
  * Tra cứu thông số kỹ thuật xe chính xác từ cơ sở dữ liệu định mức
- * Trả về null nếu từ khóa là chuỗi ngẫu nhiên hoặc không khớp mẫu xe nào
+ * - Trả về 'exact_found' khi xe và phiên bản động cơ/số hiệu khớp hoàn toàn
+ * - Trả về 'variant_mismatch' khi nhận diện được dòng xe cơ sở nhưng phiên bản số/chữ (VD: 999.0) không có thật
+ * - Trả về 'not_found' khi chuỗi là ngẫu nhiên hoặc xe hoàn toàn không có trong hồ sơ
  */
 export function lookupVehicleSpec(
   vehicleName: string,
   brandHint?: string,
   preferredType?: 'motorcycle' | 'car'
-): VehicleSpecEntry | null {
+): LookupResult {
   const cleanName = vehicleName.trim().toLowerCase();
   const cleanBrand = (brandHint || '').trim().toLowerCase();
 
   // Từ chối chuỗi quá ngắn hoặc rỗng
-  if (cleanName.length < 2) return null;
+  if (cleanName.length < 2) {
+    return { status: 'not_found' };
+  }
 
-  // Tách từ khóa
+  // Tách các số trong chuỗi người dùng nhập (ví dụ: "999.0", "999", "2.0", "400")
+  const rawNumbers = cleanName.match(/\d+(\.\d+)?/g) || [];
+  const numbersInInput = rawNumbers.map((n) => n.toLowerCase());
+
+  // 1. TÌM KHỚP CHÍNH XÁC (EXACT MATCH)
+  // Nếu người dùng nhập tên khớp tên xe hoặc alias, VÀ mọi số hiệu người dùng gõ đều phải có trong xe đó
+  for (const entry of VEHICLE_SPECS_DB) {
+    const modelLower = entry.modelName.toLowerCase();
+    const entryText = `${modelLower} ${entry.engine.toLowerCase()} ${entry.aliases.join(' ')}`;
+
+    // Kiểm tra xem cleanName có khớp tên model hoặc alias nào không
+    const isNameMatch =
+      modelLower === cleanName ||
+      entry.aliases.some((a) => a === cleanName || cleanName === `${entry.brand.toLowerCase()} ${a}`);
+
+    if (isNameMatch) {
+      // Xác minh số hiệu: Nếu người dùng có gõ số, số đó BẮT BUỘC phải tồn tại trong entry này
+      const allNumbersMatch =
+        numbersInInput.length === 0 ||
+        numbersInInput.every((num) => entryText.includes(num));
+
+      if (allNumbersMatch) {
+        return { status: 'exact_found', entry };
+      }
+    }
+  }
+
+  // 2. TÌM KHỚP THEO TỪ KHÓA ĐẦY ĐỦ (FULL KEYWORDS MATCH)
   const inputWords = cleanName.split(/\s+/).filter((w) => w.length > 0);
-
-  let bestMatch: VehicleSpecEntry | null = null;
-  let highestScore = 0;
+  let bestCandidate: VehicleSpecEntry | null = null;
+  let candidateScore = 0;
 
   for (const entry of VEHICLE_SPECS_DB) {
-    let score = 0;
     const modelLower = entry.modelName.toLowerCase();
     const brandLower = entry.brand.toLowerCase();
+    const entryFullText = `${modelLower} ${brandLower} ${entry.engine.toLowerCase()} ${entry.aliases.join(' ')}`;
 
-    // 1. Khớp chính xác tên model
-    if (modelLower === cleanName) {
-      score += 100;
+    // Kiểm tra xem tất cả các từ người dùng gõ có nằm trong entry không
+    const allWordsPresent = inputWords.every((w) => entryFullText.includes(w));
+
+    if (allWordsPresent) {
+      // Đảm bảo số hiệu không bị lệch
+      const numbersMatch =
+        numbersInInput.length === 0 ||
+        numbersInInput.every((num) => entryFullText.includes(num));
+
+      if (numbersMatch) {
+        let score = 80;
+        if (cleanBrand && brandLower.includes(cleanBrand)) score += 20;
+        if (preferredType && entry.type === preferredType) score += 10;
+        if (score > candidateScore) {
+          candidateScore = score;
+          bestCandidate = entry;
+        }
+      }
     }
+  }
 
-    // 2. Khớp chính xác alias
-    if (entry.aliases.some((a) => a === cleanName)) {
-      score += 90;
-    }
+  if (bestCandidate && candidateScore >= 80) {
+    return { status: 'exact_found', entry: bestCandidate };
+  }
 
-    // 3. Khớp một phần alias
+  // 3. KIỂM TRA LỆCH PHIÊN BẢN (VARIANT MISMATCH)
+  // Ví dụ người dùng gõ "Innova 999.0", "Wave 9999", "Vios 100"...
+  // Tên cơ sở "Innova" hoặc "Wave" có thật, nhưng số 999.0 không tồn tại ở bất kỳ bản nào
+  const relatedVariants: VehicleSpecEntry[] = [];
+  let detectedBaseModel = '';
+
+  for (const entry of VEHICLE_SPECS_DB) {
     for (const a of entry.aliases) {
-      if (cleanName.includes(a) || a.includes(cleanName)) {
-        score += 60;
+      // Nếu alias xuất hiện như 1 từ độc lập trong input (ví dụ 'innova', 'wave', 'vios', 'camry')
+      const regex = new RegExp(`\\b${a}\\b`, 'i');
+      if (regex.test(cleanName)) {
+        if (!detectedBaseModel) {
+          detectedBaseModel = entry.modelName.split(' ')[1] || a.toUpperCase();
+        }
+        if (!relatedVariants.some((v) => v.modelName === entry.modelName)) {
+          relatedVariants.push(entry);
+        }
         break;
       }
     }
-
-    // 4. Khớp từng từ khóa trong tên xe
-    let matchedWordCount = 0;
-    for (const w of inputWords) {
-      if (modelLower.includes(w) || entry.aliases.some((a) => a.includes(w))) {
-        matchedWordCount++;
-      }
-    }
-    if (matchedWordCount === inputWords.length) {
-      score += 50 + matchedWordCount * 10;
-    } else if (matchedWordCount > 0) {
-      score += (matchedWordCount / inputWords.length) * 35;
-    }
-
-    // 5. Khớp brand hint
-    if (cleanBrand && (brandLower.includes(cleanBrand) || cleanBrand.includes(brandLower))) {
-      score += 25;
-    }
-
-    // 6. Khớp loại phương tiện người dùng đang chọn
-    if (preferredType && entry.type === preferredType) {
-      score += 15;
-    }
-
-    if (score > highestScore) {
-      highestScore = score;
-      bestMatch = entry;
-    }
   }
 
-  // Ngưỡng tối thiểu nghiêm ngặt (Score >= 50)
-  // Chuỗi ngẫu nhiên như "asdjkhaksd" hoặc "123891273" sẽ có score = 0 -> Trả về null
-  if (highestScore >= 50 && bestMatch) {
-    return bestMatch;
+  if (relatedVariants.length > 0) {
+    // Có dòng xe cơ sở nhưng số hiệu người dùng gõ không khớp bản nào -> LỆCH PHIÊN BẢN
+    return {
+      status: 'variant_mismatch',
+      baseModel: detectedBaseModel || cleanName,
+      suggestions: relatedVariants.slice(0, 4),
+    };
   }
 
-  return null;
+  // 4. HOÀN TOÀN KHÔNG TÌM THẤY (Chuỗi ngẫu nhiên hoặc xe lạ)
+  return { status: 'not_found' };
 }
