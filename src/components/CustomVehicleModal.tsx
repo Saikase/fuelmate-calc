@@ -121,16 +121,22 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
             : 'bg-white border-slate-200 text-slate-900'
         }`}
       >
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div
+          className={`flex items-center justify-between pb-3 border-b shrink-0 ${
+            isDark ? 'border-slate-800' : 'border-slate-200'
+          }`}
+        >
           <div>
-            <h3 className="font-bold text-base">{t('customVehicleModalTitle')}</h3>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+            <h3 className="font-black text-base">{t('customVehicleModalTitle')}</h3>
+            <p className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               {t('customVehicleModalDesc')}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold cursor-pointer"
+            className={`p-1 rounded-full text-sm font-bold cursor-pointer ${
+              isDark ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'
+            }`}
           >
             ✕
           </button>
@@ -138,7 +144,13 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
 
         <form onSubmit={handleOnlineLookup} className="space-y-3 my-3 flex-1 overflow-y-auto pr-1">
           {/* Type selector */}
-          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-950 text-xs font-bold border border-slate-200 dark:border-slate-800">
+          <div
+            className={`grid grid-cols-2 gap-1.5 p-1 rounded-xl text-xs font-bold border ${
+              isDark
+                ? 'bg-slate-950 border-slate-800 text-slate-400'
+                : 'bg-slate-100 border-slate-200 text-slate-600'
+            }`}
+          >
             <button
               type="button"
               onClick={() => {
@@ -148,7 +160,9 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               className={`py-1.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
                 type === 'motorcycle'
                   ? 'bg-amber-500 text-slate-950 shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400'
+                  : isDark
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-950'
               }`}
             >
               <span>🏍️</span>
@@ -163,7 +177,9 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               className={`py-1.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ${
                 type === 'car'
                   ? 'bg-amber-500 text-slate-950 shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400'
+                  : isDark
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-950'
               }`}
             >
               <span>🚗</span>
@@ -172,7 +188,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+            <label
+              className={`text-xs font-bold block mb-1 ${
+                isDark ? 'text-slate-300' : 'text-slate-700'
+              }`}
+            >
               {t('vehicleNameLabel')}
             </label>
             <input
@@ -188,7 +208,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                   ? 'Ví dụ: Ninja 400, Ducati 821, Vario 160...'
                   : 'Ví dụ: Innova 2.0, Territory, G63, Veloz...'
               }
-              className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border transition ${
+              className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border font-medium transition ${
                 isDark
                   ? 'bg-slate-950 border-slate-700 text-white focus:border-amber-500'
                   : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-amber-600'
@@ -197,7 +217,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+            <label
+              className={`text-xs font-bold block mb-1 ${
+                isDark ? 'text-slate-300' : 'text-slate-700'
+              }`}
+            >
               {t('brandLabel')}
             </label>
             <input
@@ -205,7 +229,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
               placeholder="Honda, Yamaha, Toyota, Ford, Ducati..."
-              className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border transition ${
+              className={`w-full rounded-xl px-3.5 py-2 text-xs outline-none border font-medium transition ${
                 isDark
                   ? 'bg-slate-950 border-slate-700 text-white focus:border-amber-500'
                   : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-amber-600'
@@ -216,7 +240,7 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
           <button
             type="submit"
             disabled={isSearching || !vehicleName.trim()}
-            className="w-full py-2.5 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 transition cursor-pointer shadow disabled:opacity-50 flex items-center justify-center gap-1.5"
+            className="w-full py-2.5 rounded-xl font-black text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 transition cursor-pointer shadow disabled:opacity-50 flex items-center justify-center gap-1.5 active:scale-98"
           >
             {isSearching ? (
               <>
@@ -236,49 +260,83 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
             <div
               className={`p-4 rounded-2xl border-2 space-y-3 animate-fadeIn transition shadow-sm ${
                 isDark
-                  ? 'bg-slate-900 border-emerald-500/60 text-white'
+                  ? 'bg-slate-900 border-emerald-500/80 text-white'
                   : 'bg-white border-emerald-500 text-slate-950'
               }`}
             >
               {/* Header kết quả */}
-              <div className="flex items-center justify-between pb-2 border-b border-emerald-200 dark:border-emerald-900">
+              <div
+                className={`flex items-center justify-between pb-2 border-b ${
+                  isDark ? 'border-slate-800' : 'border-emerald-100'
+                }`}
+              >
                 <span className="text-xs font-black px-2.5 py-1 rounded-full bg-emerald-600 text-white flex items-center gap-1 shadow-xs">
                   <span>✓</span>
                   <span>Đã xác thực thông số</span>
                 </span>
-                <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                <span
+                  className={`text-xl font-black ${
+                    isDark ? 'text-emerald-400' : 'text-emerald-600'
+                  }`}
+                >
                   {consumption} L/100km
                 </span>
               </div>
 
-              {/* Bảng thông số kỹ thuật - NỀN SÁNG RÕ RÀNG, CHỮ ĐEN ĐẬM SẮC NÉT */}
+              {/* Bảng thông số chi tiết - TUYỆT ĐỐI KHÔNG DÙNG NỀN XÁM MỜ MÙ MÙ */}
               <div
                 className={`p-3 rounded-xl border space-y-2 text-xs ${
                   isDark
                     ? 'bg-slate-950 border-slate-800 text-slate-200'
-                    : 'bg-slate-50 border-slate-200 text-slate-800'
+                    : 'bg-slate-50 border-slate-200 text-slate-900'
                 }`}
               >
                 <div>
-                  <div className="text-[10px] font-bold text-slate-500 uppercase">Mẫu xe chuẩn hóa:</div>
-                  <div className="font-black text-sm text-slate-950 dark:text-white mt-0.5">
+                  <div
+                    className={`text-[10px] font-bold uppercase tracking-wider ${
+                      isDark ? 'text-slate-400' : 'text-slate-500'
+                    }`}
+                  >
+                    Mẫu xe kiểm định:
+                  </div>
+                  <div
+                    className={`font-black text-sm mt-0.5 ${
+                      isDark ? 'text-white' : 'text-slate-950'
+                    }`}
+                  >
                     {lookupState.entry.modelName}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800">
-                  <span className="text-slate-600 dark:text-slate-400 font-medium">Động cơ:</span>
-                  <span className="font-bold text-slate-950 dark:text-white">{engine}</span>
+                <div
+                  className={`flex items-center justify-between pt-1 border-t ${
+                    isDark ? 'border-slate-800' : 'border-slate-200'
+                  }`}
+                >
+                  <span className={isDark ? 'text-slate-400 font-medium' : 'text-slate-600 font-semibold'}>
+                    Động cơ:
+                  </span>
+                  <span className={`font-black ${isDark ? 'text-white' : 'text-slate-950'}`}>
+                    {engine}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600 dark:text-slate-400 font-medium">Nhiên liệu:</span>
+                  <span className={isDark ? 'text-slate-400 font-medium' : 'text-slate-600 font-semibold'}>
+                    Nhiên liệu khuyên dùng:
+                  </span>
                   <span className="font-black px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[11px]">
                     {fuelType.toUpperCase()}
                   </span>
                 </div>
 
-                <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                <div
+                  className={`pt-2 border-t text-[11px] font-bold flex items-center gap-1.5 ${
+                    isDark
+                      ? 'border-slate-800 text-emerald-400'
+                      : 'border-slate-200 text-emerald-700'
+                  }`}
+                >
                   <span>🏛️</span>
                   <span>Nguồn: {source}</span>
                 </div>
@@ -288,11 +346,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               <div
                 className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
                   isDark
-                    ? 'bg-slate-950/60 border-slate-800'
-                    : 'bg-emerald-50/50 border-emerald-200'
+                    ? 'bg-slate-950 border-slate-800'
+                    : 'bg-emerald-50/60 border-emerald-200'
                 }`}
               >
-                <span className="font-bold text-slate-700 dark:text-slate-300">
+                <span className={`font-bold ${isDark ? 'text-slate-300' : 'text-slate-800'}`}>
                   {t('adjustIfDesired')}
                 </span>
                 <div className="flex items-center gap-1.5">
@@ -306,10 +364,12 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     className={`w-20 rounded-lg px-2 py-1 text-center font-black text-sm border-2 ${
                       isDark
                         ? 'bg-slate-900 border-emerald-500 text-white'
-                        : 'bg-white border-emerald-500 text-slate-950 shadow-xs'
+                        : 'bg-white border-emerald-600 text-slate-950 shadow-xs'
                     }`}
                   />
-                  <span className="font-bold text-xs text-slate-600 dark:text-slate-400">L/100km</span>
+                  <span className={`font-bold text-xs ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>
+                    L/100km
+                  </span>
                 </div>
               </div>
 
@@ -328,19 +388,30 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
             <div
               className={`p-4 rounded-2xl border-2 space-y-3 animate-fadeIn ${
                 isDark
-                  ? 'bg-slate-900 border-amber-500/60 text-white'
-                  : 'bg-amber-50/60 border-amber-400 text-slate-950'
+                  ? 'bg-slate-900 border-amber-500/70 text-white'
+                  : 'bg-amber-50/80 border-amber-400 text-slate-950'
               }`}
             >
               <div className="flex items-start gap-2">
                 <span className="text-amber-500 text-lg">⚠️</span>
                 <div>
-                  <div className="text-xs font-black text-amber-700 dark:text-amber-400">
+                  <div
+                    className={`text-xs font-black ${
+                      isDark ? 'text-amber-400' : 'text-amber-900'
+                    }`}
+                  >
                     Không tồn tại phiên bản &quot;{vehicleName}&quot;
                   </div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-1">
+                  <div
+                    className={`text-[11px] mt-1 font-medium ${
+                      isDark ? 'text-slate-300' : 'text-slate-700'
+                    }`}
+                  >
                     Hồ sơ Cục Đăng kiểm không có số hiệu này. Dưới đây là các phiên bản{' '}
-                    <strong>{lookupState.baseModel}</strong> chính thức có trong cơ sở dữ liệu:
+                    <strong className={isDark ? 'text-white' : 'text-slate-950'}>
+                      {lookupState.baseModel}
+                    </strong>{' '}
+                    chính thức có trong cơ sở dữ liệu:
                   </div>
                 </div>
               </div>
@@ -355,20 +426,28 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                     className={`w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition cursor-pointer shadow-xs ${
                       isDark
                         ? 'bg-slate-950 border-slate-700 hover:border-amber-500 text-slate-100'
-                        : 'bg-white border-slate-200 hover:border-amber-500 hover:bg-amber-50/40 text-slate-900'
+                        : 'bg-white border-slate-300 hover:border-amber-500 hover:bg-amber-50 text-slate-900'
                     }`}
                   >
                     <div>
-                      <div className="text-xs font-black flex items-center gap-1.5">
+                      <div className="text-xs font-black flex items-center gap-1.5 text-slate-950 dark:text-white">
                         <span>{s.type === 'motorcycle' ? '🏍️' : '🚗'}</span>
                         <span>{s.modelName}</span>
                       </div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      <div
+                        className={`text-[10px] mt-0.5 font-medium ${
+                          isDark ? 'text-slate-400' : 'text-slate-600'
+                        }`}
+                      >
                         {s.engine} • {s.fuelType.toUpperCase()}
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-2">
-                      <div className="text-xs font-black text-amber-600 dark:text-amber-400">
+                      <div
+                        className={`text-xs font-black ${
+                          isDark ? 'text-amber-400' : 'text-amber-700'
+                        }`}
+                      >
                         {s.consumption} L/100km
                       </div>
                       <div className="text-[9px] text-emerald-600 font-bold">Chọn bản này →</div>
@@ -382,7 +461,9 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowManualForm(true)}
-                  className="w-full text-center text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-amber-500 pt-1 cursor-pointer underline"
+                  className={`w-full text-center text-xs font-bold pt-1 cursor-pointer underline ${
+                    isDark ? 'text-slate-400 hover:text-amber-400' : 'text-slate-600 hover:text-amber-700'
+                  }`}
                 >
                   ✏️ Xe của tôi là bản tự độ / độ máy (Tự nhập tay số L/100km)
                 </button>
@@ -395,17 +476,25 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
             <div
               className={`p-4 rounded-2xl border-2 space-y-3 animate-fadeIn ${
                 isDark
-                  ? 'bg-slate-900 border-rose-500/50 text-white'
-                  : 'bg-rose-50/60 border-rose-300 text-slate-950'
+                  ? 'bg-slate-900 border-rose-500/60 text-white'
+                  : 'bg-rose-50 border-rose-300 text-slate-900'
               }`}
             >
               <div className="flex items-start gap-2">
                 <span className="text-rose-500 text-lg">❌</span>
                 <div>
-                  <div className="text-xs font-black text-rose-700 dark:text-rose-400">
+                  <div
+                    className={`text-xs font-black ${
+                      isDark ? 'text-rose-400' : 'text-rose-800'
+                    }`}
+                  >
                     Không tìm thấy thông số cho &quot;{vehicleName}&quot;
                   </div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-1">
+                  <div
+                    className={`text-[11px] mt-1 font-medium ${
+                      isDark ? 'text-slate-300' : 'text-slate-700'
+                    }`}
+                  >
                     Chuỗi ký tự không khớp với bất kỳ phương tiện nào trong CSDL Cục Đăng kiểm Việt Nam & Nhà sản xuất. Bạn hãy nhập mức tiêu thụ thực tế bên dưới:
                   </div>
                 </div>
@@ -422,12 +511,20 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                   : 'bg-slate-50 border-slate-300'
               }`}
             >
-              <div className="text-xs font-bold text-slate-700 dark:text-slate-300">
+              <div
+                className={`text-xs font-black ${
+                  isDark ? 'text-slate-200' : 'text-slate-900'
+                }`}
+              >
                 📝 Nhập thông số thực tế thủ công:
               </div>
 
               <div>
-                <label className="text-[11px] font-bold block mb-1">
+                <label
+                  className={`text-[11px] font-bold block mb-1 ${
+                    isDark ? 'text-slate-300' : 'text-slate-800'
+                  }`}
+                >
                   Định mức tiêu hao thực tế (L/100km): *
                 </label>
                 <div className="flex items-center gap-2">
@@ -446,12 +543,18 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
                         : 'bg-white border-slate-300 text-slate-900 focus:border-amber-600 shadow-xs'
                     }`}
                   />
-                  <span className="text-xs font-bold text-slate-500">L/100km</span>
+                  <span className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                    L/100km
+                  </span>
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold block mb-1">
+                <label
+                  className={`text-[11px] font-bold block mb-1 ${
+                    isDark ? 'text-slate-300' : 'text-slate-800'
+                  }`}
+                >
                   Loại nhiên liệu:
                 </label>
                 <div className="grid grid-cols-3 gap-1">
@@ -475,7 +578,11 @@ export const CustomVehicleModal: React.FC<CustomVehicleModalProps> = ({
               </div>
 
               <div>
-                <label className="text-[11px] font-bold block mb-1">
+                <label
+                  className={`text-[11px] font-bold block mb-1 ${
+                    isDark ? 'text-slate-300' : 'text-slate-800'
+                  }`}
+                >
                   Mô tả động cơ (Tùy chọn):
                 </label>
                 <input
