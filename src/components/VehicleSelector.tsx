@@ -63,6 +63,31 @@ export const VehicleSelector: React.FC<VehicleSelectorProps> = ({
 
   const isImperial = selectedCountry.unitSystem === 'imperial';
 
+  // Check if search query matches vehicles in the other tab (e.g. searching 'ducati' while in car tab)
+  const otherTab: VehicleType = activeTab === 'motorcycle' ? 'car' : 'motorcycle';
+  const otherTabMatches = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const query = searchQuery.toLowerCase();
+    return countryVehicles.filter((v) => {
+      if (v.type !== otherTab) return false;
+      return (
+        v.name.toLowerCase().includes(query) ||
+        v.brand.toLowerCase().includes(query) ||
+        (v.engineDisplacement && v.engineDisplacement.toLowerCase().includes(query))
+      );
+    });
+  }, [countryVehicles, otherTab, searchQuery]);
+
+  // When search yields results in current tab, auto-select first matching vehicle if current is not in list
+  React.useEffect(() => {
+    if (searchQuery.trim() && filteredVehicles.length > 0) {
+      const isCurrentInFiltered = filteredVehicles.some((v) => v.id === selectedVehicle.id);
+      if (!isCurrentInFiltered) {
+        onSelectVehicle(filteredVehicles[0]);
+      }
+    }
+  }, [filteredVehicles, searchQuery]);
+
   const formatConsumption = (l100km: number) => {
     if (isImperial) {
       const mpg = Math.round(235.215 / l100km);
@@ -175,30 +200,94 @@ export const VehicleSelector: React.FC<VehicleSelectorProps> = ({
         />
       </div>
 
-      {/* Vehicle Dropdown */}
-      <div className="relative mb-3">
-        <select
-          value={selectedVehicle.id}
-          onChange={(e) => {
-            const found = vehicles.find((v) => v.id === e.target.value);
-            if (found) onSelectVehicle(found);
-          }}
-          className={`w-full rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none border appearance-none cursor-pointer transition ${
+      {/* Cross-tab Switch Suggestion (e.g. searched Ducati while in Car tab) */}
+      {otherTabMatches.length > 0 && filteredVehicles.length === 0 && (
+        <div
+          className={`rounded-xl p-3 mb-3 border flex items-center justify-between transition ${
             isDark
-              ? 'bg-slate-950 border-slate-700 text-white focus:border-amber-500'
-              : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-amber-600'
+              ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+              : 'bg-amber-50 border-amber-200 text-amber-900'
           }`}
         >
-          {filteredVehicles.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name} — {formatConsumption(v.fuelConsumption)}
-            </option>
-          ))}
-        </select>
-        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
-          ▼
+          <div className="text-[11px] font-medium pr-2">
+            {selectedCountry.language === 'vi' ? (
+              <span>
+                Tìm thấy <strong>{otherTabMatches.length}</strong> mẫu thuộc nhóm{' '}
+                <strong>{otherTab === 'motorcycle' ? 'Xe máy' : 'Xe hơi'}</strong>:
+              </span>
+            ) : (
+              <span>
+                Found <strong>{otherTabMatches.length}</strong> vehicles in{' '}
+                <strong>{otherTab === 'motorcycle' ? 'Motorcycles' : 'Cars'}</strong>:
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab(otherTab);
+              setSelectedBrand('ALL');
+              onSelectVehicle(otherTabMatches[0]);
+            }}
+            className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold shrink-0 shadow-xs cursor-pointer transition active:scale-95"
+          >
+            {selectedCountry.language === 'vi'
+              ? `Xem ${otherTab === 'motorcycle' ? 'Xe máy' : 'Xe hơi'}`
+              : `View ${otherTab === 'motorcycle' ? 'Bikes' : 'Cars'}`}
+          </button>
         </div>
-      </div>
+      )}
+
+      {/* No Results Empty State */}
+      {filteredVehicles.length === 0 && otherTabMatches.length === 0 && searchQuery.trim() !== '' && (
+        <div
+          className={`rounded-xl p-4 mb-3 border border-dashed text-center transition ${
+            isDark ? 'border-slate-800 bg-slate-950/60' : 'border-slate-300 bg-slate-50'
+          }`}
+        >
+          <div className="text-xs font-bold text-slate-400">
+            {selectedCountry.language === 'vi'
+              ? `Không tìm thấy mẫu xe nào khớp với "${searchQuery}"`
+              : `No vehicle found matching "${searchQuery}"`}
+          </div>
+          <button
+            type="button"
+            onClick={onOpenCustomVehicleModal}
+            className="mt-2.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold cursor-pointer transition active:scale-95 inline-flex items-center gap-1.5 shadow-xs"
+          >
+            {selectedCountry.language === 'vi'
+              ? `+ Thêm xe "${searchQuery}" & tra cứu định mức`
+              : `+ Add "${searchQuery}" & lookup MPG`}
+          </button>
+        </div>
+      )}
+
+      {/* Vehicle Dropdown */}
+      {filteredVehicles.length > 0 && (
+        <div className="relative mb-3">
+          <select
+            value={selectedVehicle.id}
+            onChange={(e) => {
+              const found = vehicles.find((v) => v.id === e.target.value);
+              if (found) onSelectVehicle(found);
+            }}
+            className={`w-full rounded-xl px-3.5 py-2.5 text-xs font-bold outline-none border appearance-none cursor-pointer transition ${
+              isDark
+                ? 'bg-slate-950 border-slate-700 text-white focus:border-amber-500'
+                : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-amber-600'
+            }`}
+          >
+            {filteredVehicles.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name} — {formatConsumption(v.fuelConsumption)}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+            ▼
+          </div>
+        </div>
+      )}
 
       {/* Current Vehicle Badge */}
       <div
