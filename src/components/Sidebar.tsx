@@ -12,6 +12,7 @@ interface SidebarProps {
   savedTripsCount: number;
   isDark: boolean;
   onToggleTheme: () => void;
+  onOpenTermsPrivacy: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -24,6 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   savedTripsCount,
   isDark,
   onToggleTheme,
+  onOpenTermsPrivacy,
 }) => {
   if (!isOpen) return null;
 
@@ -122,6 +124,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {isDark ? t('darkTheme') : t('lightTheme')}
             </button>
           </div>
+
+          {/* Terms & Privacy Policy Link */}
+          <button
+            onClick={() => {
+              onClose();
+              onOpenTermsPrivacy();
+            }}
+            className="w-full py-2 px-3 text-left rounded-xl text-xs font-semibold text-slate-500 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer flex items-center justify-between"
+          >
+            <span>{t('termsPrivacyBtn')}</span>
+            <span className="text-[10px] opacity-60">&gt;</span>
+          </button>
 
           {/* App Version Info */}
           <div className="pt-2 text-center text-[10px] text-slate-400 font-mono">

@@ -9,6 +9,7 @@ import { CountrySelectModal } from './components/CountrySelectModal';
 import { CustomVehicleModal } from './components/CustomVehicleModal';
 import { EditPriceModal } from './components/EditPriceModal';
 import { SavedTripsModal } from './components/SavedTripsModal';
+import { TermsPrivacyModal } from './components/TermsPrivacyModal';
 import { COUNTRIES } from './data/countries';
 import { VEHICLES } from './data/vehicles';
 import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip } from './types';
@@ -117,6 +118,7 @@ export function App() {
   const [isCustomVehicleOpen, setIsCustomVehicleOpen] = useState(false);
   const [isEditPriceOpen, setIsEditPriceOpen] = useState(false);
   const [isSavedTripsOpen, setIsSavedTripsOpen] = useState(false);
+  const [isTermsPrivacyOpen, setIsTermsPrivacyOpen] = useState(false);
 
   // Saved trips
   const [savedTrips, setSavedTrips] = useState<SavedTrip[]>(() => {
@@ -397,6 +399,7 @@ export function App() {
         savedTripsCount={savedTrips.length}
         isDark={isDark}
         onToggleTheme={toggleTheme}
+        onOpenTermsPrivacy={() => setIsTermsPrivacyOpen(true)}
       />
 
       {/* Country Select Modal */}
@@ -437,6 +440,14 @@ export function App() {
         onClearAll={handleClearAllTrips}
         selectedCountry={activeCountry}
         isDark={isDark}
+      />
+
+      {/* Terms of Service & Privacy Policy Modal */}
+      <TermsPrivacyModal
+        isOpen={isTermsPrivacyOpen}
+        onClose={() => setIsTermsPrivacyOpen(false)}
+        isDark={isDark}
+        language={activeCountry.language}
       />
     </div>
   );

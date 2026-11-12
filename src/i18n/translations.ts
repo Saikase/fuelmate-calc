@@ -80,6 +80,7 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'Giao diện',
     darkTheme: 'Tối',
     lightTheme: 'Sáng',
+    termsPrivacyBtn: 'Điều khoản & Quyền riêng tư',
     menuTitle: 'Menu & Cài đặt',
   },
   en: {
@@ -161,6 +162,7 @@ export const TRANSLATIONS: Record<LangCode, Record<string, string>> = {
     themeLabel: 'Appearance',
     darkTheme: 'Dark',
     lightTheme: 'Light',
+    termsPrivacyBtn: 'Terms & Privacy Policy',
     menuTitle: 'Menu & Settings',
   },
   ja: {
