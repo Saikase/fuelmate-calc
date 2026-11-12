@@ -14,7 +14,7 @@ import { COUNTRIES } from './data/countries';
 import { VEHICLES } from './data/vehicles';
 import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip, MonthlyFuelExpense, FuelKey } from './types';
 import { getTranslation } from './i18n/translations';
-import { initializeAdMob } from './services/admob';
+import { initializeAdMob, showCalculationInterstitialAd } from './services/admob';
 import { archiveOldTrips } from './utils/tripArchive';
 
 export function App() {
@@ -407,7 +407,10 @@ export function App() {
               isRoundTrip={isRoundTrip}
               onToggleRoundTrip={() => setIsRoundTrip(!isRoundTrip)}
               onPrevStep={() => setCurrentStep(1)}
-              onCalculate={() => setCurrentStep(3)}
+              onCalculate={() => {
+                setCurrentStep(3);
+                showCalculationInterstitialAd();
+              }}
               isDark={isDark}
             />
           )}

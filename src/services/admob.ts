@@ -76,3 +76,39 @@ export async function showInterstitialAd(): Promise<void> {
     console.warn('[AdMob] Interstitial failed:', error);
   }
 }
+
+// 3-minute minimum cooldown between interstitial ads
+const INTERSTITIAL_COOLDOWN_MS = 3 * 60 * 1000;
+let lastInterstitialTimestamp = 0;
+
+/**
+ * Triggers a 5s skippable Interstitial Ad on calculation (Step 2 -> Step 3),
+ * strictly throttled by a 3-minute cooldown to avoid disturbing the user.
+ */
+export async function showCalculationInterstitialAd(): Promise<void> {
+  const now = Date.now();
+  if (lastInterstitialTimestamp !== 0 && now - lastInterstitialTimestamp < INTERSTITIAL_COOLDOWN_MS) {
+    const remainingSecs = Math.round((INTERSTITIAL_COOLDOWN_MS - (now - lastInterstitialTimestamp)) / 1000);
+    console.log(`[AdMob] Interstitial skipped: 3-min cooldown active (${remainingSecs}s remaining).`);
+    return;
+  }
+
+  lastInterstitialTimestamp = now;
+
+  if (!Capacitor.isNativePlatform()) {
+    console.log('[AdMob] Web preview: 3-minute interstitial triggered.');
+    return;
+  }
+
+  try {
+    await initializeAdMob();
+    await AdMob.prepareInterstitial({
+      adId: TEST_INTERSTITIAL_ID,
+      isTesting: true,
+    });
+    await AdMob.showInterstitial();
+    console.log('[AdMob] Native Interstitial displayed successfully.');
+  } catch (error) {
+    console.warn('[AdMob] Interstitial failed gracefully:', error);
+  }
+}

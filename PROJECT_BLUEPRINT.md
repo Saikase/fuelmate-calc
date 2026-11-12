@@ -42,7 +42,9 @@ Giao diện chia thành 3 bước độc lập, chuyển bước mượt mà:
 * **Bước 3 (Kết Quả Chi Phí & Doanh Thu AdMob):**
   - Hiển thị nổi bật: Tổng tiền theo tiền tệ bản địa (VND, USD, EUR, JPY...), số lít hoặc gallon cần đổ, chi phí bình quân trên mỗi km/mile.
   - Nút **Lưu chuyến đi** (lưu vào bộ nhớ LocalStorage của máy) & nút **Tính chuyến mới**.
-  - **Banner AdMob Adaptive**: Neo cố định tại chân trang trên toàn bộ ứng dụng để tối ưu doanh thu.
+  - **Doanh thu AdMob tối ưu & Nhân văn:**
+    - **Banner AdMob Adaptive**: Neo cố định tại chân trang trên toàn bộ ứng dụng để tối ưu hiển thị liên tục.
+    - **Quảng cáo 5s bỏ qua (Interstitial Ad)**: Chỉ tích hợp duy nhất tại nút *"Tính chi phí ngay"* (chuyển từ Bước 2 sang Bước 3) với **bộ đếm giãn cách 3 phút (180 giây)** sau lần xem gần nhất. Tuyệt đối không bật ở các màn hình khác để bảo vệ trải nghiệm người dùng, giữ chân khách hàng lâu dài.
 
 ### C. Đa Ngôn Ngữ & Thích Ứng Đơn Vị Tự Động (100% Đồng Bộ)
 * Hỗ trợ 9 ngôn ngữ: `vi`, `en`, `ja`, `ko`, `th`, `de`, `fr`, `es`, `zh`.
