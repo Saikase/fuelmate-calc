@@ -48,22 +48,38 @@ export function App() {
   const [isCountryModalOpen, setIsCountryModalOpen] = useState(false);
   const [livePrices, setLivePrices] = useState<Record<string, any> | null>(null);
 
-  // Fetch updated prices from automated JSON feed & Init AdMob
+  // Fetch updated prices: Try live GitHub raw feed first, fallback to local bundle when offline
   useEffect(() => {
     // Delay native AdMob initialization slightly to let Android view hierarchy fully attach
     const timer = setTimeout(() => {
       initializeAdMob().catch((err) => console.warn('[AdMob] Init deferred error:', err));
     }, 1500);
 
-    fetch('./fuel_prices.json')
+    const REMOTE_PRICE_URL = 'https://raw.githubusercontent.com/Saikase/fuelmate-calc/main/public/fuel_prices.json';
+
+    fetch(REMOTE_PRICE_URL, { cache: 'no-cache', signal: AbortSignal.timeout(3000) })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && data.countries) {
+          console.log('[FuelMate] Loaded live remote fuel prices from GitHub cloud.');
           setLivePrices(data.countries);
+        } else {
+          throw new Error('Invalid remote data');
         }
       })
       .catch(() => {
-        // Offline bundled fallback
+        // Offline bundled fallback (Works 100% with NO internet or airplane mode)
+        fetch('./fuel_prices.json')
+          .then((res) => (res.ok ? res.json() : null))
+          .then((localData) => {
+            if (localData && localData.countries) {
+              console.log('[FuelMate] Loaded offline bundled fuel prices.');
+              setLivePrices(localData.countries);
+            }
+          })
+          .catch(() => {
+            // Memory baseline in src/data/countries.ts remains active
+          });
       });
 
     return () => clearTimeout(timer);
