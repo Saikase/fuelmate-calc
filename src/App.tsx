@@ -12,9 +12,10 @@ import { SavedTripsModal } from './components/SavedTripsModal';
 import { TermsPrivacyModal } from './components/TermsPrivacyModal';
 import { COUNTRIES } from './data/countries';
 import { VEHICLES } from './data/vehicles';
-import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip } from './types';
+import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip, MonthlyFuelExpense } from './types';
 import { getTranslation } from './i18n/translations';
 import { initializeAdMob } from './services/admob';
+import { archiveOldTrips } from './utils/tripArchive';
 
 export function App() {
   // Theme state: dark / light
@@ -149,6 +150,31 @@ export function App() {
     }
   });
 
+  // Consolidated monthly fuel expenses (auto-archived after 30 days)
+  const [monthlyExpenses, setMonthlyExpenses] = useState<Record<string, MonthlyFuelExpense>>(() => {
+    try {
+      const stored = localStorage.getItem('fuelmate_monthly_expenses');
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  // Auto-archive trips older than 30 days on mount
+  useEffect(() => {
+    const res = archiveOldTrips(savedTrips, monthlyExpenses);
+    if (res.archivedCount > 0) {
+      setSavedTrips(res.activeTrips);
+      setMonthlyExpenses(res.monthlyExpenses);
+      try {
+        localStorage.setItem('fuelmate_saved_trips', JSON.stringify(res.activeTrips));
+        localStorage.setItem('fuelmate_monthly_expenses', JSON.stringify(res.monthlyExpenses));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     try {
       localStorage.setItem('fuelmate_saved_trips', JSON.stringify(savedTrips));
@@ -156,6 +182,14 @@ export function App() {
       console.error(e);
     }
   }, [savedTrips]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('fuelmate_monthly_expenses', JSON.stringify(monthlyExpenses));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [monthlyExpenses]);
 
   // When country changes: pick matching vehicle & reset custom fuel price
   const handleSelectCountry = (country: CountryFuelData) => {
@@ -243,14 +277,22 @@ export function App() {
   ]);
 
   const handleSaveTrip = () => {
+    const nowTs = Date.now();
+    const d = new Date(nowTs);
+    const isoDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+      d.getDate()
+    ).padStart(2, '0')}`;
+
     const newTrip: SavedTrip = {
-      id: Date.now().toString(),
-      date: new Date().toLocaleDateString(selectedCountry.language === 'vi' ? 'vi-VN' : 'en-US', {
+      id: nowTs.toString(),
+      timestamp: nowTs,
+      date: d.toLocaleDateString(selectedCountry.language === 'vi' ? 'vi-VN' : 'en-US', {
         day: '2-digit',
         month: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
       }),
+      isoDate,
       routeName: `${selectedVehicle.name} (${calculationResult.actualDistance} ${calculationResult.distanceUnit})`,
       distance: calculationResult.actualDistance,
       distanceUnit: calculationResult.distanceUnit,
@@ -261,7 +303,7 @@ export function App() {
       volumeUnit: calculationResult.volumeUnit,
     };
     setSavedTrips([newTrip, ...savedTrips]);
-    alert(selectedCountry.language === 'vi' ? 'Đã lưu chuyến đi!' : 'Trip saved!');
+    setIsSavedTripsOpen(true);
   };
 
   const handleDeleteTrip = (id: string) => {
@@ -432,11 +474,12 @@ export function App() {
         isDark={isDark}
       />
 
-      {/* Saved Trips Modal */}
+      {/* Saved Trips & Fuel Calendar Modal */}
       <SavedTripsModal
         isOpen={isSavedTripsOpen}
         onClose={() => setIsSavedTripsOpen(false)}
         trips={savedTrips}
+        monthlyExpenses={monthlyExpenses}
         onDeleteTrip={handleDeleteTrip}
         onClearAll={handleClearAllTrips}
         selectedCountry={activeCountry}

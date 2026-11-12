@@ -58,7 +58,9 @@ export interface CalculationResult {
 
 export interface SavedTrip {
   id: string;
+  timestamp: number; // Unix timestamp in ms
   date: string;
+  isoDate?: string; // YYYY-MM-DD
   routeName: string;
   distance: number;
   distanceUnit: string;
@@ -67,4 +69,18 @@ export interface SavedTrip {
   currencySymbol: string;
   fuelVolume: number;
   volumeUnit: string;
+}
+
+export interface MonthlyFuelExpense {
+  yearMonth: string; // "YYYY-MM", e.g. "2026-11"
+  year: number;
+  month: number; // 1 - 12
+  totalCost: number;
+  currencySymbol: string;
+  totalVolume: number;
+  volumeUnit: string;
+  totalDistance: number;
+  distanceUnit: string;
+  tripCount: number;
+  dailyCosts: Record<string, number>; // "YYYY-MM-DD" -> cost
 }

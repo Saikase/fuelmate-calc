@@ -81,6 +81,19 @@ Giao diện chia thành 3 bước độc lập, chuyển bước mượt mà:
 > 7. **Placeholder ô nhập:**
 >    - Phải dùng tiền tố chuẩn: `e.g. Ninja 400, Ducati 821...` thay vì `Ví dụ: ...` khi chuyển sang tiếng Anh.
 
+### E. Quản Lý Chi Phí: Lịch Sử Chuyến Đi & Lịch Xài Xăng Tích Hợp (Tự Động Dọn Dẹp Sau 30 Ngày)
+Modal **Lịch sử & Lịch xài xăng** được chia làm 2 tab chuyên biệt:
+1. **Tab "Chuyến gần đây" (Recent Trips):**
+   - **Thẻ tổng hợp ở đầu danh sách:** Tự động cộng dồn **Tổng số tiền xăng đã chi**, **Tổng quãng đường** và **Tổng số lít/gallon** của tất cả các chuyến đi gần nhất.
+   - **Tự động dọn dẹp sau 1 tháng (30 ngày):** Các chuyến đi chi tiết cũ hơn 30 ngày sẽ tự động được xóa khỏi bộ nhớ chi tiết để máy nhẹ và mượt.
+2. **Tab "Lịch xài xăng" (Fuel Calendar):**
+   - **Bảo lưu vĩnh viễn số tiền xăng theo tháng:** Mặc dù chi tiết chuyến đi sau 30 ngày bị xóa, nhưng **tổng số tiền xăng đã tiêu theo từng tháng** (`fuelmate_monthly_expenses`) được lưu trữ vĩnh viễn.
+   - **Lưới lịch tháng tương tác (Interactive Month Calendar):** 
+     - Hiển thị ngày trong tháng (T2 - CN).
+     - Ngày nào có phát sinh chi phí đổ xăng sẽ được tô sáng kèm biểu tượng ⛽ và số tiền cụ thể của ngày đó.
+     - Bấm vào từng ngày để xem chi tiết số tiền đã xài.
+   - **Điều hướng tháng & Danh sách đối soát các tháng:** Cho phép người dùng chuyển qua lại giữa các tháng (Tháng này, tháng trước,...) để theo dõi biến động chi tiêu xăng xe qua thời gian.
+
 ---
 
 ## 3. Kiến Trúc Kỹ Thuật (Tech Stack)
