@@ -37,9 +37,6 @@ export function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Mobile frame simulator toggle
-  const [isMobileFrame, setIsMobileFrame] = useState(true);
-
   // Step state: 1 (Xe) -> 2 (Quãng đường & Giá) -> 3 (Kết quả)
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
@@ -279,33 +276,16 @@ export function App() {
 
   return (
     <div
-      className={`min-h-screen transition-colors flex flex-col items-center justify-start sm:p-4 ${
+      className={`min-h-screen w-full transition-colors flex flex-col ${
         isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'
       }`}
     >
-      {/* Container: If isMobileFrame, renders as a smartphone mockup */}
+      {/* Full-bleed edge-to-edge container: fits any phone screen perfectly, centered max-w-lg on desktop */}
       <div
-        className={`w-full transition-all duration-300 flex flex-col ${
-          isMobileFrame
-            ? `max-w-[430px] min-h-[92vh] sm:my-3 rounded-[36px] border-[6px] shadow-2xl overflow-hidden relative ${
-                isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-300'
-              }`
-            : `max-w-xl min-h-screen ${isDark ? 'bg-slate-950' : 'bg-slate-50'}`
+        className={`w-full max-w-lg mx-auto flex-1 flex flex-col min-h-screen shadow-none ${
+          isDark ? 'bg-slate-950' : 'bg-slate-50'
         }`}
       >
-        {/* Dynamic Island on Mobile frame */}
-        {isMobileFrame && (
-          <div
-            className={`hidden sm:flex justify-center pt-2 pb-1 border-b ${
-              isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-200 border-slate-300'
-            }`}
-          >
-            <div className="w-24 h-4 bg-black rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-slate-800 ml-auto mr-2" />
-            </div>
-          </div>
-        )}
-
         {/* Top Header */}
         <Header
           onOpenSidebar={() => setIsSidebarOpen(true)}
@@ -313,8 +293,6 @@ export function App() {
           onOpenCountryModal={() => setIsCountryModalOpen(true)}
           isDark={isDark}
           onToggleTheme={toggleTheme}
-          isMobileFrame={isMobileFrame}
-          onToggleMobileFrame={() => setIsMobileFrame(!isMobileFrame)}
         />
 
         {/* Wizard Step Indicator Bar */}
@@ -399,6 +377,7 @@ export function App() {
 
         {/* Footer info bar */}
         <footer
+          style={{ paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom, 0px))' }}
           className={`py-2 px-4 border-t text-[10px] flex items-center justify-between ${
             isDark
               ? 'bg-slate-900/80 border-slate-800 text-slate-500'

@@ -34,7 +34,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs flex">
       <div
-        className={`w-72 max-w-[80vw] h-full shadow-2xl p-5 flex flex-col justify-between transition-colors border-r ${
+        style={{
+          paddingTop: 'calc(1.25rem + env(safe-area-inset-top, 0px))',
+          paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))',
+        }}
+        className={`w-72 max-w-[80vw] h-full shadow-2xl px-5 flex flex-col justify-between transition-colors border-r ${
           isDark
             ? 'bg-slate-900 border-slate-800 text-slate-100'
             : 'bg-white border-slate-200 text-slate-900'

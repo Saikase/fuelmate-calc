@@ -8,8 +8,6 @@ interface HeaderProps {
   onOpenCountryModal: () => void;
   isDark: boolean;
   onToggleTheme: () => void;
-  isMobileFrame: boolean;
-  onToggleMobileFrame: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,21 +16,20 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCountryModal,
   isDark,
   onToggleTheme,
-  isMobileFrame,
-  onToggleMobileFrame,
 }) => {
   const t = (k: string) => getTranslation(selectedCountry.language, k);
   const isImperial = selectedCountry.unitSystem === 'imperial';
 
   return (
     <header
-      className={`sticky top-0 z-30 px-4 py-3 border-b transition-colors ${
+      style={{ paddingTop: 'calc(0.75rem + env(safe-area-inset-top, 0px))' }}
+      className={`sticky top-0 z-30 px-4 pb-3 border-b transition-colors ${
         isDark
           ? 'bg-slate-900/95 border-slate-800 text-slate-100'
           : 'bg-white/95 border-slate-200 text-slate-900'
       }`}
     >
-      <div className="max-w-md mx-auto flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         {/* Menu Hamburger & Brand */}
         <div className="flex items-center gap-2.5">
           <button
@@ -82,18 +79,6 @@ export const Header: React.FC<HeaderProps> = ({
             title={isDark ? t('lightTheme') : t('darkTheme')}
           >
             {isDark ? '☀️' : '🌙'}
-          </button>
-
-          {/* Desktop/Mobile simulator switch */}
-          <button
-            onClick={onToggleMobileFrame}
-            className={`hidden sm:block p-2 rounded-xl border text-xs transition cursor-pointer ${
-              isDark
-                ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            {isMobileFrame ? '🖥️' : '📱'}
           </button>
         </div>
       </div>
