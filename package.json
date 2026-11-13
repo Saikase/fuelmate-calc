@@ -9,7 +9,8 @@
     "icons": "node scripts/generate_icons.mjs",
     "update:prices": "node scripts/fetch_fuel_prices.mjs",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:root": "npm run build && gh-pages -d dist -r https://github.com/Saikase/saikase.github.io.git -b main --nojekyll"
   },
   "dependencies": {
     "@capacitor-community/admob": "^7.2.0",
