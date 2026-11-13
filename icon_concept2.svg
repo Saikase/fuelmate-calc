@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b" />
+      <stop offset="100%" stop-color="#09090b" />
+    </linearGradient>
+
+    <!-- Amber Glow -->
+    <radialGradient id="glow2" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Neon Road Gradient -->
+    <linearGradient id="roadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+
+    <filter id="shadow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad2)" />
+  <rect width="510" height="510" x="1" y="1" rx="114" fill="none" stroke="#27272a" stroke-width="2" />
+
+  <!-- Ambient Glow -->
+  <circle cx="256" cy="240" r="170" fill="url(#glow2)" />
+
+  <!-- Highway Road Track (Forming a loop & perspective horizon) -->
+  <g filter="url(#shadow2)">
+    <!-- Road surface polygon/path -->
+    <path d="M 120 410 
+             C 160 330, 210 270, 240 240 
+             C 270 210, 310 210, 330 230 
+             C 355 255, 340 310, 290 340 
+             C 240 370, 190 390, 150 410 Z" 
+          fill="#27272a" 
+          stroke="url(#roadGrad)" 
+          stroke-width="14" 
+          stroke-linejoin="round" />
+
+    <!-- Dashed Road Lane Marker -->
+    <path d="M 135 410 
+             C 170 335, 215 275, 245 245 
+             C 270 220, 305 220, 320 235 
+             C 335 255, 325 295, 285 325 
+             C 245 355, 205 380, 165 405" 
+          fill="none" 
+          stroke="#ffffff" 
+          stroke-width="4" 
+          stroke-dasharray="16 12" 
+          stroke-linecap="round" 
+          opacity="0.85" />
+  </g>
+
+  <!-- Stylized Modern Fuel Nozzle (Gia cố chất ô tô / cây xăng) -->
+  <g filter="url(#shadow2)" transform="translate(180, 100)">
+    <!-- Nozzle Metal Spout -->
+    <path d="M 50 120 L 95 65 L 145 65" 
+          fill="none" 
+          stroke="#e2e8f0" 
+          stroke-width="14" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+
+    <!-- Nozzle Spout Tip -->
+    <circle cx="145" cy="65" r="8" fill="#f59e0b" />
+
+    <!-- Main Handle Body -->
+    <path d="M 35 135 L 75 90 L 90 105 L 55 150 Z" fill="#f59e0b" />
+
+    <!-- Grip / Lever Guard -->
+    <path d="M 40 145 C 55 165, 80 155, 95 135 L 90 120 C 78 135, 60 140, 50 130 Z" fill="#ffffff" opacity="0.9" />
+
+    <!-- Fuel Drop Dropping from Spout Tip -->
+    <path d="M 145 85 C 145 85, 137 97, 137 104 A 8 8 0 0 0 153 104 C 153 97, 145 85, 145 85 Z" 
+          fill="#f59e0b" />
+  </g>
+
+  <!-- Route Waypoint Pin / Cost Node at Bottom Right -->
+  <g filter="url(#shadow2)">
+    <circle cx="360" cy="380" r="32" fill="#09090b" stroke="#f59e0b" stroke-width="4" />
+    <path d="M 352 380 L 368 380 M 360 372 L 360 388" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" />
+    <circle cx="360" cy="380" r="6" fill="#f59e0b" />
+  </g>
+</svg>
