@@ -1,36 +1,112 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FuelMate - Privacy Policy & Terms of Service</title>
+  <title>Chính Sách Bảo Mật & Điều Khoản Sử Dụng - FuelMate</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png" />
+  <meta name="description" content="Chính sách bảo mật, quyền riêng tư và điều khoản dịch vụ của FuelMate. Tuân thủ Google AdSense và quy định bảo vệ dữ liệu." />
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #1e293b; background: #f8fafc; }
-    h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; }
-    h2 { color: #334155; margin-top: 32px; }
-    .badge { display: inline-block; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: bold; margin-bottom: 16px; }
-    .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    ul { padding-left: 20px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #334155;
+      background-color: #0f172a;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 760px;
+      background: #ffffff;
+      padding: 36px;
+      border-radius: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      font-size: 24px;
+      color: #0f172a;
+      margin-top: 0;
+      border-bottom: 2px solid #f59e0b;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 18px;
+      color: #1e293b;
+      margin-top: 28px;
+    }
+    p, li {
+      font-size: 14px;
+      color: #475569;
+    }
+    a {
+      color: #d97706;
+      text-decoration: underline;
+    }
+    .badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #b45309;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      margin-bottom: 16px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 10px 20px;
+      background: #f59e0b;
+      color: #0f172a;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    .back-btn:hover {
+      background: #d97706;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <span class="badge">Official Policy</span>
-    <h1>FuelMate - Privacy Policy & Terms of Service</h1>
-    <p><strong>Effective Date:</strong> November 12, 2026<br>
-    <strong>Package Name:</strong> <code>com.fuelmate.fuelcalc</code><br>
-    <strong>Developer:</strong> Saikase</p>
+  <div class="container">
+    <span class="badge">FuelMate • Progressive Web App</span>
+    <h1>Chính Sách Bảo Mật & Điều Khoản Dịch Vụ</h1>
+    <p><em>Cập nhật lần cuối: Tháng 11/2026</em></p>
 
-    <h2>1. Privacy Policy</h2>
-    <p><strong>Zero Personal Data Collection:</strong> FuelMate does NOT collect, transmit, or sell any personal information. We do not require account registration, and we do not access your contacts, precise GPS location, photos, or storage files.</p>
-    <p><strong>Device Storage:</strong> Vehicle preferences and saved trips are saved locally on your device via HTML5 LocalStorage. You can clear this data at any time inside the app.</p>
-    <p><strong>Third-Party Advertisements (Google AdMob):</strong> We use Google AdMob to display banner advertisements. Google AdMob may use anonymized mobile identifiers to serve relevant ads in accordance with Google's Privacy Policy. You can reset or opt out of personalized ads in your Android Settings (Settings > Google > Ads).</p>
+    <h2>1. Quyền riêng tư & Bảo vệ dữ liệu cá nhân</h2>
+    <p>
+      Ứng dụng web <strong>FuelMate</strong> (truy cập tại <a href="https://saikase.github.io/">saikase.github.io</a>) cam kết bảo vệ tối đa quyền riêng tư của mọi người dùng. Chúng tôi <strong>KHÔNG</strong> thu thập, lưu trữ, xử lý hay chuyển giao bất kỳ thông tin nhận dạng cá nhân nào (như họ tên, email, số điện thoại, danh bạ hoặc định vị GPS trực tiếp).
+    </p>
 
-    <h2>2. Terms of Service</h2>
-    <p>FuelMate is designed as an estimation calculator for trip fuel costs based on published manufacturer economy metrics and public fuel station benchmarks. Actual fuel consumption may differ based on driving habits, vehicle load, and traffic conditions.</p>
+    <h2>2. Cơ chế lưu trữ cục bộ (Client-Side Storage)</h2>
+    <p>
+      Mọi tùy chọn phương tiện do bạn nhập, các phép tính chi phí xăng/sạc điện và lịch sử chuyến đi đều được lưu trữ hoàn toàn cục bộ trong bộ nhớ trình duyệt của bạn (<strong>LocalStorage</strong>). Ứng dụng không truyền dữ liệu nhật ký chuyến đi này về bất kỳ máy chủ bên ngoài nào. Bạn có toàn quyền xóa dữ liệu này bất cứ lúc nào trong giao diện ứng dụng hoặc bằng cách xóa dữ liệu duyệt web.
+    </p>
 
-    <h2>3. Contact</h2>
-    <p>For questions regarding this policy, please visit our repository: <a href="https://github.com/Saikase/fuelmate-calc">https://github.com/Saikase/fuelmate-calc</a>.</p>
+    <h2>3. Quảng cáo Google AdSense & Cookie bên thứ ba</h2>
+    <p>
+      Trang web này sử dụng nền tảng <strong>Google AdSense</strong> để hiển thị quảng cáo tự động.
+    </p>
+    <ul>
+      <li>Các nhà cung cấp bên thứ ba, bao gồm Google, sử dụng cookie để phân phát quảng cáo dựa trên các lượt truy cập trước đây của người dùng vào trang web này hoặc các trang web khác trên Internet.</li>
+      <li>Việc Google sử dụng cookie quảng cáo cho phép Google và các đối tác phân phát quảng cáo cho người dùng dựa trên lượt truy cập của họ vào trang web của chúng tôi và/hoặc các trang web khác.</li>
+      <li>Người dùng có thể chọn không nhận quảng cáo được cá nhân hóa bằng cách truy cập <a href="https://www.google.com/settings/ads" target="_blank" rel="noreferrer">Cài đặt quảng cáo của Google (Ads Settings)</a> hoặc truy cập <a href="https://www.aboutads.info" target="_blank" rel="noreferrer">aboutads.info</a>.</li>
+    </ul>
+
+    <h2>4. Điều khoản sử dụng & Miễn trừ trách nhiệm</h2>
+    <p>
+      FuelMate cung cấp công cụ tính toán chi phí năng lượng nhằm mục đích tham khảo và dự trù ngân sách cá nhân. Dữ liệu tiêu thụ nhiên liệu dựa trên thông số công bố của các nhà sản xuất xe và Cục Đăng kiểm Việt Nam. Chi phí thực tế có thể thay đổi tùy thuộc vào điều kiện giao thông, tải trọng xe, phong cách lái xe và sự biến động của giá nhiên liệu thị trường.
+    </p>
+
+    <h2>5. Bản quyền & Giấy phép</h2>
+    <p>
+      Tất cả thương hiệu, biểu tượng và mã nguồn thuộc sở hữu của nhà phát triển FuelMate. Người dùng được tự do cài đặt dưới dạng PWA và sử dụng miễn phí cho mục đích cá nhân.
+    </p>
+
+    <a href="./" class="back-btn">← Quay lại FuelMate</a>
   </div>
 </body>
 </html>

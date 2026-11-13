@@ -35,7 +35,7 @@ export const TermsPrivacyModal: React.FC<TermsPrivacyModalProps> = ({
               {isVi ? 'Điều Khoản & Chính Sách Bảo Mật' : 'Terms & Privacy Policy'}
             </h3>
             <p className="text-[10px] text-slate-500 dark:text-slate-400">
-              {isVi ? 'Tuân thủ tiêu chuẩn Samsung Store, Xiaomi & Google AdMob' : 'Compliant with App Store & Google AdMob policies'}
+              {isVi ? 'Tuân thủ chính sách Google AdSense, GDPR & An toàn thông tin Web/PWA' : 'Compliant with Google AdSense, GDPR & Web Privacy Standards'}
             </p>
           </div>
           <button
@@ -75,91 +75,131 @@ export const TermsPrivacyModal: React.FC<TermsPrivacyModalProps> = ({
           {activeTab === 'privacy' ? (
             isVi ? (
               <>
-                <div className="font-bold text-slate-800 dark:text-slate-100">1. Không thu thập dữ liệu cá nhân</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100">1. Quyền riêng tư & Bảo vệ dữ liệu cá nhân</div>
                 <p>
-                  Ứng dụng <strong>FuelMate</strong> tôn trọng quyền riêng tư của bạn. Chúng tôi KHÔNG thu thập, lưu trữ hay chia sẻ bất kỳ thông tin cá nhân nào như: Họ tên, số điện thoại, danh bạ, email hay vị trí GPS thời gian thực.
+                  Ứng dụng web <strong>FuelMate</strong> tôn trọng và cam kết bảo vệ tối đa quyền riêng tư của bạn. Chúng tôi KHÔNG yêu cầu đăng ký tài khoản, KHÔNG thu thập, lưu trữ hay chia sẻ bất kỳ thông tin danh tính cá nhân (PII) nào như họ tên, số điện thoại, danh bạ hay vị trí GPS thời gian thực.
                 </p>
 
-                <div className="font-bold text-slate-800 dark:text-slate-100">2. Lưu trữ nội bộ trên thiết bị</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100">2. Lưu trữ cục bộ trên trình duyệt (LocalStorage)</div>
                 <p>
-                  Tất cả các thông tin do bạn nhập như: Danh sách xe tùy chỉnh, lịch sử các chuyến đi đã lưu, và mức giá xăng tự điều chỉnh đều được lưu cục bộ trên bộ nhớ máy (LocalStorage). Bạn có thể xóa dữ liệu này bất kỳ lúc nào bằng nút "Xóa tất cả".
+                  Mọi thông tin do bạn tự nhập như: danh sách xe tùy chỉnh, thông số tiêu hao, và lịch sử các chuyến đi đã tính đều được lưu 100% trong bộ nhớ máy của bạn (LocalStorage). Dữ liệu này không gửi về bất kỳ máy chủ nào và bạn có toàn quyền xóa vĩnh viễn bất kỳ lúc nào.
                 </p>
 
-                <div className="font-bold text-slate-800 dark:text-slate-100">3. Dịch vụ bên thứ ba (Google AdMob)</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100">3. Quảng cáo Google AdSense & Cookie bên thứ ba</div>
                 <p>
-                  Ứng dụng hiển thị quảng cáo thông qua nền tảng <strong>Google AdMob</strong>. Google có thể sử dụng các mã định danh thiết bị ẩn danh (Advertising ID) để tối ưu hóa hiển thị quảng cáo phù hợp theo chính sách quyền riêng tư của Google. Bạn có thể đặt lại mã nhận dạng quảng cáo trong phần Cài đặt của điện thoại.
+                  Trang web sử dụng dịch vụ quảng cáo của <strong>Google AdSense</strong>. Google và các đối tác nhà cung cấp bên thứ ba sử dụng cookie (chẳng hạn như cookie DoubleClick) để phân phát quảng cáo dựa trên các lần truy cập trước đây của bạn vào trang web này hoặc các trang web khác trên Internet.
+                </p>
+                <p>
+                  Bạn có thể tắt tính năng cá nhân hóa quảng cáo bất cứ lúc nào bằng cách truy cập trang{' '}
+                  <a
+                    href="https://www.google.com/settings/ads"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-amber-500 underline hover:text-amber-400"
+                  >
+                    Cài đặt quảng cáo của Google
+                  </a>{' '}
+                  hoặc thông qua{' '}
+                  <a
+                    href="https://www.aboutads.info"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-amber-500 underline hover:text-amber-400"
+                  >
+                    aboutads.info
+                  </a>.
                 </p>
 
-                <div className="font-bold text-slate-800 dark:text-slate-100">4. Quyền truy cập mạng (INTERNET)</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100">4. Kết nối mạng & Dữ liệu giá xăng</div>
                 <p>
-                  Ứng dụng chỉ sử dụng quyền truy cập Internet để nạp dữ liệu bảng giá xăng dầu công khai mới nhất và tải quảng cáo AdMob.
+                  Ứng dụng chỉ sử dụng kết nối mạng Internet để đồng bộ bảng giá xăng dầu công khai mới nhất (từ Petrolimex, Cục Đăng kiểm) và tải các định dạng quảng cáo hợp lệ từ Google AdSense.
                 </p>
               </>
             ) : (
               <>
                 <div className="font-bold text-slate-800 dark:text-slate-100">1. Zero Personal Data Collection</div>
                 <p>
-                  <strong>FuelMate</strong> respects your privacy. We do NOT collect, store, or transmit any personal identifiable information, such as your name, contacts, phone number, email, or exact GPS coordinates.
+                  <strong>FuelMate</strong> respects your digital privacy. We do NOT require user account registration, nor do we collect, harvest, or store any Personally Identifiable Information (PII) such as names, emails, phone numbers, or real-time GPS locations.
                 </p>
 
-                <div className="font-bold text-slate-800 dark:text-slate-100">2. Local Device Storage</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100">2. Client-Side Storage (LocalStorage)</div>
                 <p>
-                  All user inputs, including customized vehicle specifications, calculated trip logs, and manual fuel price adjustments, are stored strictly on your local device (LocalStorage). You maintain full control and can clear this data anytime.
+                  All user inputs, including customized vehicle specifications, calculated expense history, and fuel prices, are stored strictly within your browser's local sandbox (LocalStorage). No trip logs are transmitted to external application servers.
                 </p>
 
-                <div className="font-bold text-slate-800 dark:text-slate-100">3. Third-Party Advertising (Google AdMob)</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100">3. Google AdSense & Third-Party Cookies</div>
                 <p>
-                  This application utilizes <strong>Google AdMob</strong> to display advertisements. Google may process non-personalized device identifiers and cookies to serve ads in compliance with Google's Privacy Policy. You can reset your Advertising ID via your device settings.
+                  This website displays advertisements served by <strong>Google AdSense</strong>. Google and its partner advertising networks use cookies to serve ads based on your prior visits to this website or other sites across the Web.
+                </p>
+                <p>
+                  You can opt out of personalized advertising by visiting{' '}
+                  <a
+                    href="https://www.google.com/settings/ads"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-amber-500 underline hover:text-amber-400"
+                  >
+                    Google Ads Settings
+                  </a>{' '}
+                  or via{' '}
+                  <a
+                    href="https://www.aboutads.info"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-amber-500 underline hover:text-amber-400"
+                  >
+                    aboutads.info
+                  </a>.
                 </p>
 
-                <div className="font-bold text-slate-800 dark:text-slate-100">4. Network Permissions</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100">4. Network Connectivity</div>
                 <p>
-                  Internet permission is solely required to fetch the latest public benchmark fuel prices and deliver AdMob ad inventory.
+                  Internet connectivity is solely employed to retrieve updated public benchmark fuel prices and display approved Google AdSense ad units.
                 </p>
               </>
             )
           ) : isVi ? (
             <>
-              <div className="font-bold text-slate-800 dark:text-slate-100">1. Mục đích tham khảo</div>
+              <div className="font-bold text-slate-800 dark:text-slate-100">1. Mục đích tham khảo & Tính toán ước tính</div>
               <p>
-                <strong>FuelMate</strong> cung cấp công cụ tính toán ước tính chi phí nhiên liệu dựa trên mức tiêu hao công bố của nhà sản xuất và giá xăng dầu tham chiếu tại thời điểm tra cứu.
+                <strong>FuelMate</strong> cung cấp công cụ tính toán và dự toán chi phí nhiên liệu dựa trên mức tiêu hao công bố của nhà sản xuất (hoặc Cục Đăng kiểm Việt Nam) kết hợp với biểu giá nhiên liệu tham chiếu tại thời điểm sử dụng.
               </p>
 
               <div className="font-bold text-slate-800 dark:text-slate-100">2. Giới hạn trách nhiệm</div>
               <p>
-                Chi phí thực tế trong chuyến đi của bạn có thể chênh lệch do các yếu tố khách quan: Điều kiện thời tiết, mật độ giao thông, thói quen đạp ga/phanh, tải trọng xe và tình trạng bảo dưỡng phương tiện. Người dùng tự chịu trách nhiệm về các quyết định chi tiêu thực tế.
+                Chi phí thực tế trong chuyến đi của bạn có thể dao động tùy theo điều kiện thực tế (thời tiết, tải trọng, tình trạng tắc đường, thói quen tăng giảm tốc và tình trạng bảo dưỡng xe). FuelMate đóng vai trò là công cụ hỗ trợ và không chịu trách nhiệm tài chính cho bất kỳ sai lệch thực tế nào.
               </p>
 
-              <div className="font-bold text-slate-800 dark:text-slate-100">3. Bản quyền & Giấy phép</div>
+              <div className="font-bold text-slate-800 dark:text-slate-100">3. Bản quyền & Sở hữu trí tuệ</div>
               <p>
-                Toàn bộ thiết kế giao diện, logo và mã nguồn thuộc sở hữu của nhà phát triển FuelMate. Người dùng được cấp quyền cài đặt và sử dụng miễn phí cho mục đích cá nhân.
+                Toàn bộ thiết kế giao diện, logo, nhãn hiệu và mã nguồn thuộc sở hữu của nhà phát triển FuelMate. Người dùng được tự do truy cập, cài đặt dưới dạng PWA và sử dụng miễn phí cho mục đích cá nhân.
               </p>
 
               <div className="font-bold text-slate-800 dark:text-slate-100">4. Cập nhật điều khoản</div>
               <p>
-                Điều khoản có thể được cập nhật định kỳ để phù hợp với quy định mới của các chợ ứng dụng (Google Play, Samsung Galaxy Store, Xiaomi GetApps).
+                Các điều khoản và chính sách này có thể được cập nhật định kỳ để luôn tuân thủ các quy định hiện hành của Google AdSense và pháp luật liên quan.
               </p>
             </>
           ) : (
             <>
-              <div className="font-bold text-slate-800 dark:text-slate-100">1. Reference Purpose</div>
+              <div className="font-bold text-slate-800 dark:text-slate-100">1. Informational & Estimation Purpose</div>
               <p>
-                <strong>FuelMate</strong> is designed as an estimation utility. Fuel consumption metrics are sourced from official manufacturer test cycles and public retail fuel price feeds.
+                <strong>FuelMate</strong> is an estimation calculator that models trip fuel expenses using certified manufacturer specifications and public retail energy price feeds.
               </p>
 
-              <div className="font-bold text-slate-800 dark:text-slate-100">2. Disclaimer of Warranties</div>
+              <div className="font-bold text-slate-800 dark:text-slate-100">2. Disclaimer of Financial Warranties</div>
               <p>
-                Actual trip expenditures may vary depending on driving style, traffic conditions, cargo payload, vehicle maintenance, and local station variations. The app is provided on an "as-is" basis without financial warranties.
+                Actual travel costs may differ due to traffic bottlenecks, payload weights, driving style, weather conditions, and vehicle mechanical health. The tool is provided "as is" for guidance.
               </p>
 
               <div className="font-bold text-slate-800 dark:text-slate-100">3. Intellectual Property</div>
               <p>
-                All interface designs, branding, and code are owned by FuelMate developers. Users are granted a personal, non-exclusive license to use the app free of charge.
+                All interface assets, logos, and code are the intellectual property of the FuelMate developer. Users enjoy a free, personal, non-exclusive license to use and install this Progressive Web App.
               </p>
 
               <div className="font-bold text-slate-800 dark:text-slate-100">4. Terms Modifications</div>
               <p>
-                These terms may be updated periodically to align with evolving app store policies and regulatory requirements.
+                These terms and policies may be amended from time to time to stay compliant with Google AdSense guidelines and web regulatory standards.
               </p>
             </>
           )}

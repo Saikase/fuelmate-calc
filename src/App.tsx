@@ -432,7 +432,16 @@ export function App() {
               : 'bg-white border-slate-200 text-slate-500'
           }`}
         >
-          <span>FuelMate v1.0</span>
+          <div className="flex items-center gap-1.5">
+            <span>FuelMate v1.0</span>
+            <span>•</span>
+            <button
+              onClick={() => setIsTermsPrivacyOpen(true)}
+              className="text-amber-500 hover:underline cursor-pointer"
+            >
+              {activeCountry.language === 'vi' ? 'Điều khoản & Bảo mật' : 'Privacy & Terms'}
+            </button>
+          </div>
           <span>{activeCountry.name} • {activeCountry.currency}</span>
         </footer>
       </div>
