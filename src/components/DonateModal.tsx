@@ -14,7 +14,7 @@ export const DonateModal: React.FC<DonateModalProps> = ({
   onClose,
   selectedCountry,
   isDark,
-  qrImageUrl = './donate_qr.jpg',
+  qrImageUrl = './donate_qr.png',
 }) => {
   const [copied, setCopied] = useState(false);
   const isEnglish = selectedCountry.language !== 'vi';
@@ -22,10 +22,10 @@ export const DonateModal: React.FC<DonateModalProps> = ({
   if (!isOpen) return null;
 
   const bankInfo = {
-    bankName: 'Vietcombank (CN Hùng Vương)',
-    accountNumber: 'QRGD000104034876101',
+    bankName: 'Vietcombank',
+    accountNumber: '1040348761',
     accountHolder: 'NGUYEN TRAN VI',
-    transferContent: 'FuelMate Cafe',
+    transferContent: 'FuelMate',
   };
 
   const handleCopyAccount = () => {
@@ -78,8 +78,8 @@ export const DonateModal: React.FC<DonateModalProps> = ({
             {qrImageUrl ? (
               <img
                 src={qrImageUrl}
-                alt="QR Donate"
-                className="max-h-72 w-auto object-contain rounded-xl shadow-md border border-slate-200 dark:border-slate-700 bg-white"
+                alt="VietQR Vietcombank"
+                className="w-60 h-auto max-w-full object-contain rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 bg-white p-2"
               />
             ) : (
               <div className="w-56 h-56 rounded-xl border-2 border-dashed border-amber-500/50 flex flex-col items-center justify-center p-3 bg-amber-500/5 text-center">
