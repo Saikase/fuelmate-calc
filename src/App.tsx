@@ -10,6 +10,8 @@ import { CustomVehicleModal } from './components/CustomVehicleModal';
 import { EditPriceModal } from './components/EditPriceModal';
 import { SavedTripsModal } from './components/SavedTripsModal';
 import { TermsPrivacyModal } from './components/TermsPrivacyModal';
+import { DonateModal } from './components/DonateModal';
+import { InstallPwaBanner } from './components/InstallPwaBanner';
 import { COUNTRIES } from './data/countries';
 import { VEHICLES } from './data/vehicles';
 import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip, MonthlyFuelExpense, FuelKey } from './types';
@@ -142,6 +144,7 @@ export function App() {
   const [isEditPriceOpen, setIsEditPriceOpen] = useState(false);
   const [isSavedTripsOpen, setIsSavedTripsOpen] = useState(false);
   const [isTermsPrivacyOpen, setIsTermsPrivacyOpen] = useState(false);
+  const [isDonateOpen, setIsDonateOpen] = useState(false);
 
   // Saved trips
   const [savedTrips, setSavedTrips] = useState<SavedTrip[]>(() => {
@@ -336,8 +339,8 @@ export function App() {
     >
       {/* Full-bleed edge-to-edge container: fits any phone screen perfectly, centered max-w-lg on desktop */}
       <div
-        className={`w-full max-w-lg mx-auto flex-1 flex flex-col min-h-screen shadow-none ${
-          isDark ? 'bg-slate-950' : 'bg-slate-50'
+        className={`w-full max-w-lg mx-auto flex-1 flex flex-col min-h-screen shadow-none sm:shadow-2xl sm:border-x transition-colors ${
+          isDark ? 'bg-slate-950 sm:border-slate-800' : 'bg-slate-50 sm:border-slate-200'
         }`}
       >
         {/* Top Header */}
@@ -348,6 +351,9 @@ export function App() {
           isDark={isDark}
           onToggleTheme={toggleTheme}
         />
+
+        {/* PWA Install Prompt Banner (Only appears when installable on mobile browsers) */}
+        <InstallPwaBanner isDark={isDark} language={activeCountry.language} />
 
         {/* Wizard Step Indicator Bar */}
         <div
@@ -458,6 +464,7 @@ export function App() {
         isDark={isDark}
         onToggleTheme={toggleTheme}
         onOpenTermsPrivacy={() => setIsTermsPrivacyOpen(true)}
+        onOpenDonate={() => setIsDonateOpen(true)}
       />
 
       {/* Country Select Modal */}
@@ -507,6 +514,14 @@ export function App() {
         onClose={() => setIsTermsPrivacyOpen(false)}
         isDark={isDark}
         language={activeCountry.language}
+      />
+
+      {/* Donate / Buy Me A Coffee Modal */}
+      <DonateModal
+        isOpen={isDonateOpen}
+        onClose={() => setIsDonateOpen(false)}
+        selectedCountry={activeCountry}
+        isDark={isDark}
       />
     </div>
   );

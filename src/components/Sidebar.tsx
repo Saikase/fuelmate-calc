@@ -13,6 +13,7 @@ interface SidebarProps {
   isDark: boolean;
   onToggleTheme: () => void;
   onOpenTermsPrivacy: () => void;
+  onOpenDonate: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -26,6 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isDark,
   onToggleTheme,
   onOpenTermsPrivacy,
+  onOpenDonate,
 }) => {
   if (!isOpen) return null;
 
@@ -107,6 +109,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span>{t('savedTripsTitle')}</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 font-mono">
                 {savedTripsCount}
+              </span>
+            </button>
+
+            {/* Mục Ủng hộ tác giả / Donate */}
+            <button
+              onClick={() => {
+                onClose();
+                onOpenDonate();
+              }}
+              className="w-full text-left p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-bold text-amber-600 dark:text-amber-400 transition flex items-center justify-between cursor-pointer shadow-xs"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-sm">☕</span>
+                <span>{selectedCountry.language === 'vi' ? 'Mời cà phê (Donate)' : 'Support Developer'}</span>
+              </div>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500 text-slate-950 font-black">
+                {selectedCountry.language === 'vi' ? 'Ủng hộ' : 'Donate'}
               </span>
             </button>
           </div>

@@ -1,0 +1,32 @@
+{
+  "name": "FuelMate - Tính Tiền Xăng & Xe Điện",
+  "short_name": "FuelMate",
+  "description": "Tính tiền xăng và chi phí sạc xe điện thông minh, tiện lợi, tra cứu định mức Cục Đăng kiểm",
+  "start_url": "./",
+  "id": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "lang": "vi",
+  "categories": ["utilities", "productivity", "travel"],
+  "icons": [
+    {
+      "src": "./favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "./store_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
