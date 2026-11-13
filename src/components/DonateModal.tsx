@@ -6,7 +6,7 @@ interface DonateModalProps {
   onClose: () => void;
   selectedCountry: CountryFuelData;
   isDark: boolean;
-  qrImageUrl?: string; // QR code image URL or path when provided
+  qrImageUrl?: string;
 }
 
 export const DonateModal: React.FC<DonateModalProps> = ({
@@ -14,18 +14,17 @@ export const DonateModal: React.FC<DonateModalProps> = ({
   onClose,
   selectedCountry,
   isDark,
-  qrImageUrl,
+  qrImageUrl = './donate_qr.jpg',
 }) => {
   const [copied, setCopied] = useState(false);
   const isEnglish = selectedCountry.language !== 'vi';
 
   if (!isOpen) return null;
 
-  // Placeholder bank info (ready to be customized with author's exact details)
   const bankInfo = {
-    bankName: 'MB Bank (Ngân hàng Quân Đội)',
-    accountNumber: '0988888888', // Sẽ thay bằng STK thật của bạn
-    accountHolder: 'NGUYEN HOANG VI', // Sẽ thay bằng tên thật của bạn
+    bankName: 'Vietcombank (CN Hùng Vương)',
+    accountNumber: 'QRGD000104034876101',
+    accountHolder: 'NGUYEN TRAN VI',
     transferContent: 'FuelMate Cafe',
   };
 
@@ -40,7 +39,7 @@ export const DonateModal: React.FC<DonateModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
       <div
-        className={`w-full max-w-sm rounded-3xl p-5 shadow-2xl border transition-all flex flex-col ${
+        className={`w-full max-w-sm max-h-[90vh] overflow-y-auto rounded-3xl p-5 shadow-2xl border transition-all flex flex-col ${
           isDark
             ? 'bg-slate-900 border-slate-700 text-slate-100'
             : 'bg-white border-slate-200 text-slate-900'
@@ -80,7 +79,7 @@ export const DonateModal: React.FC<DonateModalProps> = ({
               <img
                 src={qrImageUrl}
                 alt="QR Donate"
-                className="w-56 h-56 object-contain rounded-xl shadow-md border border-slate-200 dark:border-slate-700 bg-white p-2"
+                className="max-h-72 w-auto object-contain rounded-xl shadow-md border border-slate-200 dark:border-slate-700 bg-white"
               />
             ) : (
               <div className="w-56 h-56 rounded-xl border-2 border-dashed border-amber-500/50 flex flex-col items-center justify-center p-3 bg-amber-500/5 text-center">

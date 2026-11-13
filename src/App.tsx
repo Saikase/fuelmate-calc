@@ -4,7 +4,6 @@ import { Sidebar } from './components/Sidebar';
 import { VehicleSelector } from './components/VehicleSelector';
 import { RouteAndFuelStep } from './components/RouteAndFuelStep';
 import { ResultStep } from './components/ResultStep';
-import { AdMobBanner } from './components/AdMobBanner';
 import { CountrySelectModal } from './components/CountrySelectModal';
 import { CustomVehicleModal } from './components/CustomVehicleModal';
 import { EditPriceModal } from './components/EditPriceModal';
@@ -16,7 +15,6 @@ import { COUNTRIES } from './data/countries';
 import { VEHICLES } from './data/vehicles';
 import type { CountryFuelData, Vehicle, CalculationResult, SavedTrip, MonthlyFuelExpense, FuelKey } from './types';
 import { getTranslation } from './i18n/translations';
-import { initializeAdMob, showCalculationInterstitialAd } from './services/admob';
 import { archiveOldTrips } from './utils/tripArchive';
 
 export function App() {
@@ -50,11 +48,6 @@ export function App() {
 
   // Fetch updated prices: Try live GitHub raw feed first, fallback to local bundle when offline
   useEffect(() => {
-    // Delay native AdMob initialization slightly to let Android view hierarchy fully attach
-    const timer = setTimeout(() => {
-      initializeAdMob().catch((err) => console.warn('[AdMob] Init deferred error:', err));
-    }, 1500);
-
     const REMOTE_PRICE_URL = 'https://raw.githubusercontent.com/Saikase/fuelmate-calc/main/public/fuel_prices.json';
 
     fetch(REMOTE_PRICE_URL, { cache: 'no-cache', signal: AbortSignal.timeout(3000) })
@@ -81,8 +74,6 @@ export function App() {
             // Memory baseline in src/data/countries.ts remains active
           });
       });
-
-    return () => clearTimeout(timer);
   }, []);
 
   // Merge live dynamic prices with selected country
@@ -415,7 +406,6 @@ export function App() {
               onPrevStep={() => setCurrentStep(1)}
               onCalculate={() => {
                 setCurrentStep(3);
-                showCalculationInterstitialAd();
               }}
               isDark={isDark}
             />
@@ -432,11 +422,6 @@ export function App() {
             />
           )}
         </main>
-
-        {/* Persistent AdMob Adaptive Banner */}
-        <div className="px-3 pb-2">
-          <AdMobBanner isDark={isDark} language={activeCountry.language} />
-        </div>
 
         {/* Footer info bar */}
         <footer
