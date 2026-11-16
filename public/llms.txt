@@ -1,0 +1,24 @@
+# FuelMate - Tính Tiền Xăng & Xe Điện Thông Minh
+
+> FuelMate là công cụ tính toán chi phí nhiên liệu xăng và chi phí sạc xe điện thông minh, đa quốc gia, hỗ trợ tra cứu định mức tiêu thụ nhiên liệu công bố chính thức từ Cục Đăng kiểm Việt Nam.
+
+## Thông tin dự án
+- Tên: FuelMate
+- Trang chủ: https://saikase.github.io/
+- Tác giả: NGUYEN TRAN VI (vinguyen280805@gmail.com)
+- Loại hình: Web App / Progressive Web App (PWA)
+- Giấy phép: Miễn phí sử dụng cá nhân
+
+## Các tính năng chính
+- Tính tiền xăng theo định mức xe (xe máy, ô tô xăng, xe hybrid)
+- Tính tiền sạc xe điện (EV) theo biểu giá trạm sạc công cộng (V-GREEN, EVN) hoặc sạc tại nhà
+- Tra cứu cơ sở dữ liệu định mức tiêu thụ thực tế của hơn 100 dòng xe phổ biến tại Việt Nam (Honda, Yamaha, VinFast, Toyota, Hyundai, Mazda, Ford...)
+- Hỗ trợ nhập điều kiện vận hành thực tế: Cao tốc (-15%), Tiêu chuẩn (0%), Chở nặng (+10%), Kẹt xe đô thị (+20%)
+- Tính năng chia đều chi phí cho nhóm bạn / đoàn đi chung xe
+- Quản lý nhật ký chuyến đi và tổng kết chi phí xăng xe hàng tháng (lưu cục bộ trên thiết bị qua LocalStorage)
+- Tự động cập nhật biểu giá bán lẻ xăng dầu mới nhất theo kỳ điều hành của Bộ Công Thương / Petrolimex
+
+## Dữ liệu và API công khai
+- Biểu giá xăng dầu live: https://saikase.github.io/fuel_prices.json
+- Chính sách bảo mật: https://saikase.github.io/privacy.html
+- Sơ đồ trang web: https://saikase.github.io/sitemap.xml

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Fragment } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { VehicleSelector } from './components/VehicleSelector';
@@ -325,7 +325,9 @@ export function App() {
   return (
     <div
       className={`min-h-screen w-full transition-colors flex flex-col ${
-        isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'
+        isDark
+          ? 'bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.15),rgba(255,255,255,0))] text-slate-100'
+          : 'bg-slate-100 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.12),rgba(255,255,255,0))] text-slate-900'
       }`}
     >
       {/* Full-bleed edge-to-edge container: fits any phone screen perfectly, centered max-w-lg on desktop */}
@@ -346,30 +348,39 @@ export function App() {
         {/* PWA Install Prompt Banner (Only appears when installable on mobile browsers) */}
         <InstallPwaBanner isDark={isDark} language={activeCountry.language} />
 
-        {/* Wizard Step Indicator Bar */}
+        {/* Wizard Step Indicator Bar with dynamic progress connector */}
         <div
-          className={`px-4 py-2 border-b flex items-center justify-between text-xs font-bold ${
+          className={`px-4 py-2.5 border-b flex items-center justify-between text-xs font-bold transition-colors ${
             isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200'
           }`}
         >
           {[
-            { step: 1, label: t('step1') },
-            { step: 2, label: t('step2') },
-            { step: 3, label: t('step3') },
-          ].map((item) => (
-            <button
-              key={item.step}
-              onClick={() => setCurrentStep(item.step as 1 | 2 | 3)}
-              className={`flex items-center gap-1.5 py-1 px-2.5 rounded-lg transition cursor-pointer ${
-                currentStep === item.step
-                  ? 'bg-amber-500 text-slate-950 shadow-xs'
-                  : currentStep > item.step
-                  ? 'text-amber-500'
-                  : 'text-slate-400'
-              }`}
-            >
-              <span>{item.label}</span>
-            </button>
+            { step: 1, label: t('step1'), icon: '🛵' },
+            { step: 2, label: t('step2'), icon: '⛽' },
+            { step: 3, label: t('step3'), icon: '📊' },
+          ].map((item, idx) => (
+            <Fragment key={item.step}>
+              {idx > 0 && (
+                <div
+                  className={`flex-1 h-0.5 mx-1.5 rounded-full transition-colors duration-300 ${
+                    currentStep >= item.step ? 'bg-amber-500' : isDark ? 'bg-slate-800' : 'bg-slate-200'
+                  }`}
+                />
+              )}
+              <button
+                onClick={() => setCurrentStep(item.step as 1 | 2 | 3)}
+                className={`flex items-center gap-1.5 py-1 px-2.5 rounded-xl transition-all duration-200 cursor-pointer ${
+                  currentStep === item.step
+                    ? 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20 scale-102'
+                    : currentStep > item.step
+                    ? 'text-amber-500 hover:bg-amber-500/10'
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                <span className="text-xs">{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            </Fragment>
           ))}
         </div>
 

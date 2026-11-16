@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-base tracking-tight">FuelMate</span>
+              <h1 className="font-black text-base tracking-tight m-0 inline">FuelMate</h1>
               <button
                 onClick={onOpenCountryModal}
                 className="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 font-bold flex items-center gap-1 hover:bg-amber-500/20 transition cursor-pointer"
