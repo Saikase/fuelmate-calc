@@ -1,27 +1,27 @@
 {
-  "generatedAt": "2026-11-23T04:21:07.007Z",
+  "generatedAt": "2026-11-26T18:21:58.989Z",
   "version": "1.0",
   "countries": {
     "VN": {
       "country": "Vietnam",
       "currency": "VND",
       "unit": "L",
-      "lastUpdated": "2026-11-23",
+      "lastUpdated": "2026-11-26",
       "source": "Petrolimex / Giacahomnay",
       "fuels": {
         "ron95": {
           "name": "Xăng E10 RON 95-III",
-          "price": 19100,
+          "price": 19050,
           "change": -1310
         },
         "ron92": {
           "name": "Xăng E5 RON 92-II",
-          "price": 18570,
+          "price": 18390,
           "change": -1500
         },
         "diesel": {
           "name": "Dầu DO 0,05S-II",
-          "price": 26340,
+          "price": 24960,
           "change": -1870
         }
       }
